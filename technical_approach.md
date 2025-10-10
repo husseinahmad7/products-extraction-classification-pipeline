@@ -78,6 +78,7 @@ pip install requests beautifulsoup4 pandas lxml faiss-cpu genai sklearn sentence
 ### 3. Classification Strategy
 
 #### Gemini API
+we used gemini api with TF-IDF for speed.
 
 ```python
 # Find 20-30 MOST RELEVANT categories using similarity
@@ -91,18 +92,19 @@ category_context = "\n".join([
 ```
 
 **Benefits:**
-- ✅ Only sends relevant categories (e.g., power tools for drills)
-- ✅ Reduces token usage by 70-80%
-- ✅ Improves accuracy (fewer distractions)
-- ✅ Faster Gemini responses
-- ✅ Intelligent, adaptive category selection
-- ✅ Provides similarity scores as hints
+- Only sends relevant categories
+- Reduces token usage
+- Improves accuracy (fewer distractions)
+- Faster Gemini responses
+- Intelligent, adaptive category selection
+- Provides similarity scores as hints
 
 ## How It Works
 
 ##### Two Approaches Supported
+there is two approaches to provide category context to the model to choose from:
 
-###### 1. TF-IDF (Recommended for Production)
+###### 1. TF-IDF
 ```python
 classifier = GeminiClassifier(
     api_key, 
@@ -124,8 +126,8 @@ classifier = GeminiClassifier(
 3. Computes cosine similarity
 4. Returns top-K most similar categories
 
-###### 2. Sentence Transformers (Better Accuracy)
-use embedding database like chromaDB/Faiss with embedding models as jinaai or any.
+###### 2. Sentence Transformers (semantic search) (Better Accuracy)
+use ewe can also use embedding database like chromaDB/Faiss with embedding models as jinaai or any.
 note: implemented but not tested yet.
 ```python
 classifier = GeminiClassifier(
