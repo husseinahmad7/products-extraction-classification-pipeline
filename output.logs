@@ -3374,5 +3374,5 @@ INFO:tornado.access:200 POST /v1beta/models/gemini-2.5-flash-lite:generateConten
 INFO:logger:Scraping Flex-Tools product: https://www.flex-tools.com/en-gb/products/measuring-technology-laser/digital-spirit-levels/adl-60-p
 INFO:tornado.access:200 POST /v1beta/models/gemini-2.5-flash-lite:generateContent?%24alt=json%3Benum-encoding%3Dint (127.0.0.1) 2326.90ms
   Confidence: medium | Reasoning: The product is a digital spirit level, which is a type of measuring tool. Among the provided options
-INFO:logger:Pipeline finished: processed 1090 products
-INFO:logger:Exported 1090 products to products_output.csv
+INFO:logger:Pipeline finished: processed 1095 products
+INFO:logger:Exported 1095 products to products_output.csv

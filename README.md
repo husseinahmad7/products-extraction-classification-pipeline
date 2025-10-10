@@ -77,6 +77,13 @@ pipeline.run(max_products_per_site=50) # disabled to scrape all products
 pipeline.export_to_csv('my_products.csv')  # Custom filename
 ```
 
+### Skip from prevouse
+if you have a dataset with `source_url` we can pass those, and scrap just the new urls:
+```python
+# modify main():
+pipeline = ProductPipeline(CLASSIFICATION_TREE, skip_from_file="products_output_old.csv")
+```
+
 ### USAGE EXAMPLE WITH SIMILARITY SEARCH
 adjust the notebook according to the fit the following:
 
@@ -88,7 +95,7 @@ if __name__ == '__main__':
     print("Gemini Classifier with Similarity Search - Demo")
     print("="*60)
     
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'your-api-key-here')
+    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
     
     # Load classification tree
     tree_df = pd.read_csv('classification_tree.csv')

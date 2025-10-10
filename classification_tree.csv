@@ -319,7 +319,7 @@ id,parent_id,name,path
 158407,116749,Compressed Air Tool (Other),115547.116749.158407
 158408,158407,"Compressed Air Tool (Other, Unspecified))",115547.116749.158407.158408
 118814,NULL,Construction technology,118814
-119445,118814,Construction chemicals,118814.1194
+119445,118814,Construction chemicals,118814.119445
 119446,119445,Surface protection (building material),118814.119445.119446
 119447,119446,Coating material (building material),118814.119445.119446.119447
 119448,119446,"Paint, lacquer, coating (building material)",118814.119445.119446.119448
