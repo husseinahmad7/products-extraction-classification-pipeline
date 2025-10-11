@@ -262,6 +262,7 @@ cache urls respecting last modified, cache categories, cache old existing urls
 - Use embeddings (sentence-transformers) especialy `jina-embeddings` (needs gpu, efficent for long texts with matryoshka embeddings) or `gemini embeddings` (low api rate limit) or `EmbeddingGemma` (small 308M, but effecient, can be deployed on edge)
 - Implement active learning for edge cases
 - Human-in-the-loop for low score
+- Tensorflow recommenders
 
 #### 6. Rate limiting
 - use tor requests to change ip
