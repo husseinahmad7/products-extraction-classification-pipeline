@@ -1,7 +1,7 @@
 """Integration checks for a real S3-compatible object store.
 
 Set PIPELINE_TEST_S3_ENDPOINT and PIPELINE_TEST_S3_BUCKET to run these tests.
-The CI job supplies an isolated MinIO instance and disposable credentials.
+The CI job supplies an isolated RustFS instance and disposable credentials.
 """
 
 import os

@@ -85,21 +85,22 @@ jobs:
         with:
           version: "0.12.13"
       - run: uv sync --frozen --extra server --extra dev
-      - name: Start isolated MinIO with disposable SSE key
+      - name: Start isolated RustFS with disposable credentials
         run: >-
-          docker run --detach --name pipeline-ci-minio
+          docker run --detach --name pipeline-ci-s3
           --publish 127.0.0.1:9000:9000
-          --env MINIO_ROOT_USER=pipeline-ci
-          --env MINIO_ROOT_PASSWORD=disposable-ci-secret
-          --env MINIO_KMS_SECRET_KEY=ci-key:MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
-          docker.io/minio/minio:RELEASE.2025-09-07T16-13-09Z server /data
+          --env RUSTFS_ACCESS_KEY=pipeline-ci
+          --env RUSTFS_SECRET_KEY=disposable-ci-secret
+          --env RUSTFS_SSE_S3_MASTER_KEY=MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+          --env RUSTFS_CONSOLE_ENABLE=false
+          ghcr.io/rustfs/rustfs:1.0.0-glibc@sha256:47c1141822010b2f3d4cbcec1b1f3480b7a2d732696d6eec8bb2a34b04921df3
       - name: Wait for object store and create bucket
         run: |
           for attempt in {1..30}; do
-            if curl --silent --fail http://127.0.0.1:9000/minio/health/live >/dev/null; then break; fi
+            if curl --silent --fail http://127.0.0.1:9000/health/ready >/dev/null; then break; fi
             sleep 2
           done
-          curl --fail http://127.0.0.1:9000/minio/health/live
+          curl --fail http://127.0.0.1:9000/health/ready
           uv run --no-sync python - <<'PY'
           import boto3
           import os
@@ -110,9 +111,9 @@ jobs:
           PY
       - run: uv run --no-sync pytest tests/test_s3.py -v
       - if: failure()
-        run: docker logs pipeline-ci-minio
+        run: docker logs pipeline-ci-s3
       - if: always()
-        run: docker rm --force pipeline-ci-minio || true
+        run: docker rm --force pipeline-ci-s3 || true
   container:
     runs-on: ubuntu-latest
     timeout-minutes: 30
