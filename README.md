@@ -4,7 +4,7 @@ Declarative extraction with field-level evidence, offline replay, and an operato
 
 **Development alpha — the approved full-release plan is not complete. Do not deploy as a public SaaS yet.** The release workflow fails closed until the missing capability and comparative-benchmark gates are met. See [implementation status](docs/implementation-status.md).
 
-The developer-first [GitHub Pages documentation source](site/index.html) has an [authoring and deployment guide](docs/site.md). The public site goes live only after the Pages workflow runs from `main` and the repository is configured for GitHub Actions publishing.
+The developer-first [documentation site](https://husseinahmad7.github.io/products-extraction-classification-pipeline/) is published from [GitHub Pages source](site/index.html); see its [authoring and deployment guide](docs/site.md). Pages hosts static docs only, not the dashboard or API.
 
 ## What works
 

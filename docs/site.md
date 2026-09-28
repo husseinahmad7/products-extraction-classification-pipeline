@@ -28,6 +28,9 @@ links. It does not validate external URLs or certify browser accessibility.
 3. The `github-pages` environment records the resulting URL. Verify the live
    home page and anchor navigation after the first deployment.
 
+The configured project URL is
+[husseinahmad7.github.io/products-extraction-classification-pipeline/](https://husseinahmad7.github.io/products-extraction-classification-pipeline/).
+
 No credentials, source captures, model files, or operator data belong in
 `site/`. The site uses local CSS and system fonts, with no CDN dependency.
 Publishing this site does not unblock the separately gated Python/container
