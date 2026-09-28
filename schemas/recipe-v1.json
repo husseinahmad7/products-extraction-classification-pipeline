@@ -1,0 +1,359 @@
+{
+  "$defs": {
+    "FieldRule": {
+      "additionalProperties": false,
+      "properties": {
+        "cardinality": {
+          "default": "one",
+          "enum": [
+            "one",
+            "many"
+          ],
+          "title": "Cardinality",
+          "type": "string"
+        },
+        "locator": {
+          "$ref": "#/$defs/Locator"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "transforms": {
+          "items": {
+            "$ref": "#/$defs/Transform"
+          },
+          "maxItems": 20,
+          "title": "Transforms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "locator"
+      ],
+      "title": "FieldRule",
+      "type": "object"
+    },
+    "Limits": {
+      "additionalProperties": false,
+      "properties": {
+        "deadline_seconds": {
+          "default": 300,
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Deadline Seconds",
+          "type": "integer"
+        },
+        "max_bytes": {
+          "default": 10000000,
+          "maximum": 100000000,
+          "minimum": 1,
+          "title": "Max Bytes",
+          "type": "integer"
+        },
+        "max_pages": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "max_records": {
+          "default": 5000,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Max Records",
+          "type": "integer"
+        },
+        "request_timeout_seconds": {
+          "default": 20,
+          "maximum": 120,
+          "minimum": 1,
+          "title": "Request Timeout Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "Locator": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attribute"
+        },
+        "type": {
+          "enum": [
+            "css_text",
+            "css_attr",
+            "json_pointer",
+            "json_path",
+            "jsonld",
+            "labeled_value"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "Locator",
+      "type": "object"
+    },
+    "RecordScope": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "default": "one_per_resource",
+          "enum": [
+            "one_per_resource",
+            "container_selector",
+            "items_path",
+            "one_per_document"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "RecordScope",
+      "type": "object"
+    },
+    "TargetSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "definition": {
+          "additionalProperties": true,
+          "title": "Definition",
+          "type": "object"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "target/v1",
+          "default": "target/v1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "definition"
+      ],
+      "title": "TargetSchema",
+      "type": "object"
+    },
+    "Transform": {
+      "additionalProperties": false,
+      "properties": {
+        "decimal_separator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decimal Separator"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "default": 1,
+          "title": "Group"
+        },
+        "grouping_separator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grouping Separator"
+        },
+        "mapping": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapping"
+        },
+        "op": {
+          "enum": [
+            "strip",
+            "collapse_whitespace",
+            "unicode_nfc",
+            "join",
+            "parse_decimal",
+            "parse_date",
+            "resolve_url",
+            "enum_map",
+            "unique",
+            "sort",
+            "regex_capture"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "pattern": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pattern"
+        },
+        "separator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Separator"
+        },
+        "unknown": {
+          "default": "error",
+          "enum": [
+            "error",
+            "keep",
+            "null"
+          ],
+          "title": "Unknown",
+          "type": "string"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "title": "Transform",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "fields": {
+      "additionalProperties": {
+        "$ref": "#/$defs/FieldRule"
+      },
+      "minProperties": 1,
+      "title": "Fields",
+      "type": "object"
+    },
+    "identity_fields": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Identity Fields",
+      "type": "array"
+    },
+    "limits": {
+      "$ref": "#/$defs/Limits"
+    },
+    "mode": {
+      "enum": [
+        "html",
+        "json",
+        "browser",
+        "pdf"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "record_scope": {
+      "$ref": "#/$defs/RecordScope"
+    },
+    "schema_version": {
+      "const": "recipe/v1",
+      "default": "recipe/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "target": {
+      "$ref": "#/$defs/TargetSchema"
+    }
+  },
+  "required": [
+    "source_id",
+    "mode",
+    "identity_fields",
+    "fields",
+    "target"
+  ],
+  "title": "Recipe",
+  "type": "object"
+}

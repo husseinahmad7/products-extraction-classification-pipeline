@@ -1,0 +1,28 @@
+schema_version: recipe/v1
+source_id: example-catalog
+mode: json
+record_scope:
+  type: items_path
+  value: "$.items[*]"
+identity_fields: ["/sku"]
+fields:
+  /sku:
+    locator: {type: json_pointer, value: /sku}
+    required: true
+  /name:
+    locator: {type: json_pointer, value: /name}
+    transforms: [{op: strip}]
+    required: true
+  /price:
+    locator: {type: json_pointer, value: /price}
+    required: true
+target:
+  id: example-product-v1
+  definition:
+    type: object
+    additionalProperties: false
+    properties:
+      sku: {type: string}
+      name: {type: string}
+      price: {type: number}
+    required: [sku, name, price]

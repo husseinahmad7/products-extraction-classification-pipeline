@@ -1,0 +1,28 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "definition": {
+      "additionalProperties": true,
+      "title": "Definition",
+      "type": "object"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "target/v1",
+      "default": "target/v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "definition"
+  ],
+  "title": "TargetSchema",
+  "type": "object"
+}

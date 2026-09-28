@@ -1,0 +1,3434 @@
+{
+  "schema_version": "external-building-diagnostic/v1",
+  "status": "completed",
+  "certification_eligible": false,
+  "auto_accept_enabled": false,
+  "label_provenance": "external_publisher_source_list",
+  "publisher": "Hong Kong Buildings Department via DATA.GOV.HK",
+  "source_page": "https://data.gov.hk/en-data/dataset/hk-bd-opendata-cdbbm",
+  "terms": "https://data.gov.hk/en/terms-and-conditions",
+  "warning": "Source-list categories are inherited, not independently reviewed product-type gold. This title-only five-class diagnostic cannot certify the original Sika/Flex taxonomy or scraping.",
+  "source_sha256": {
+    "concrete_admixtures": "e2ced95692c65e600e9f49c82be760cb35718517941f2d157559cd3d1a1396c2",
+    "fire_stop_sealing": "9df02abe872800841e7cfa19bbeccb79539e35556d139fda9caeab162952e412",
+    "structural_fire_protection": "8613ebd7a9ea369d1b0bdddf7ccd5a81dae97b0dfcc19ce23f4e8285254f5d67",
+    "mechanical_couplers": "b06dbe83a94728867ca98b5f256fc3d58b7fc7206f6073fd59295479c24d1b09",
+    "structural_fixing": "549d26941ece02e69a42eaec9ffc44580c3ee7e583695809333b0f3e4c36ef39"
+  },
+  "taxonomy": {
+    "concrete_admixtures": "Concrete admixtures mixed into concrete to change setting, water reduction, strength or workability.",
+    "fire_stop_sealing": "Fire-stop seals and sealing systems for penetrations or joints, including wraps, mastics, collars and sealants.",
+    "structural_fire_protection": "Fire-protection coatings, boards or materials for structural beams, columns, slabs and load-bearing assemblies.",
+    "mechanical_couplers": "Mechanical rebar couplers and splices connecting reinforcing steel bars.",
+    "structural_fixing": "Structural anchors, bolts, fasteners and fixing systems securing building elements into concrete or masonry."
+  },
+  "models": {
+    "tfidf_taxonomy_retrieval": {
+      "status": "completed",
+      "test_examples": 155,
+      "cold_seconds": 0.015181380000001354,
+      "leaf_accuracy": 0.14193548387096774,
+      "macro_f1": 0.12879349046015715,
+      "micro_f1": 0.14193548387096774,
+      "class_order": [
+        "concrete_admixtures",
+        "fire_stop_sealing",
+        "structural_fire_protection",
+        "mechanical_couplers",
+        "structural_fixing"
+      ],
+      "confusion_matrix": [
+        [
+          12,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          55,
+          4,
+          11,
+          2,
+          3
+        ],
+        [
+          17,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          18,
+          1,
+          0,
+          4,
+          0
+        ],
+        [
+          21,
+          1,
+          0,
+          4,
+          0
+        ]
+      ],
+      "p50_latency_ms": 0.5151600000203871,
+      "p95_latency_ms": 0.5982790000302884,
+      "sequential_throughput_per_second": 1880.7315293423608
+    },
+    "trained_tfidf_linear": {
+      "status": "completed",
+      "test_examples": 155,
+      "cold_seconds": 0.04485092599998097,
+      "leaf_accuracy": 0.7354838709677419,
+      "macro_f1": 0.6213445868062217,
+      "micro_f1": 0.7354838709677419,
+      "class_order": [
+        "concrete_admixtures",
+        "fire_stop_sealing",
+        "structural_fire_protection",
+        "mechanical_couplers",
+        "structural_fixing"
+      ],
+      "confusion_matrix": [
+        [
+          2,
+          9,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          64,
+          11,
+          0,
+          0
+        ],
+        [
+          1,
+          15,
+          3,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0,
+          20,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          25
+        ]
+      ],
+      "p50_latency_ms": 0.8106280000106381,
+      "p95_latency_ms": 1.1590230000138035,
+      "sequential_throughput_per_second": 1161.3200204704099
+    },
+    "frozen_embedding_retrieval": {
+      "status": "completed",
+      "test_examples": 155,
+      "cold_seconds": 5.070311866999987,
+      "leaf_accuracy": 0.4967741935483871,
+      "macro_f1": 0.47832292595896514,
+      "micro_f1": 0.4967741935483871,
+      "class_order": [
+        "concrete_admixtures",
+        "fire_stop_sealing",
+        "structural_fire_protection",
+        "mechanical_couplers",
+        "structural_fixing"
+      ],
+      "confusion_matrix": [
+        [
+          3,
+          1,
+          3,
+          5,
+          0
+        ],
+        [
+          7,
+          23,
+          27,
+          14,
+          4
+        ],
+        [
+          2,
+          0,
+          10,
+          7,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          21,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          6,
+          20
+        ]
+      ],
+      "p50_latency_ms": 5.540028000041275,
+      "p95_latency_ms": 6.7019290000303045,
+      "sequential_throughput_per_second": 171.56115515422604,
+      "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+    },
+    "laya": {
+      "status": "completed",
+      "test_examples": 155,
+      "cold_seconds": 11.752592727999968,
+      "leaf_accuracy": 0.5161290322580645,
+      "macro_f1": 0.5539869829612791,
+      "micro_f1": 0.5161290322580645,
+      "class_order": [
+        "concrete_admixtures",
+        "fire_stop_sealing",
+        "structural_fire_protection",
+        "mechanical_couplers",
+        "structural_fixing"
+      ],
+      "confusion_matrix": [
+        [
+          5,
+          0,
+          7,
+          0,
+          0
+        ],
+        [
+          16,
+          22,
+          36,
+          0,
+          1
+        ],
+        [
+          5,
+          2,
+          12,
+          0,
+          0
+        ],
+        [
+          3,
+          0,
+          2,
+          18,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          1,
+          23
+        ]
+      ],
+      "p50_latency_ms": 35.97639299999855,
+      "p95_latency_ms": 39.3136449999929,
+      "sequential_throughput_per_second": 25.384189445223875,
+      "revision": "55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851",
+      "peak_gpu_memory_bytes": 2445006336
+    }
+  },
+  "runtime": {
+    "python": "3.12.13",
+    "device": "cuda",
+    "gpu": "Tesla T4",
+    "packages": {
+      "laya": "0.3.20",
+      "torch": "2.10.0+cu128",
+      "transformers": "4.57.6",
+      "sentence-transformers": "5.1.1",
+      "scikit-learn": "1.6.1"
+    }
+  },
+  "data_audit": {
+    "raw_rows": 861,
+    "deduplicated_rows": 663,
+    "cross_label_title_conflicts_removed": 17,
+    "manufacturer_groups": 250,
+    "class_counts": {
+      "concrete_admixtures": 69,
+      "structural_fixing": 173,
+      "fire_stop_sealing": 284,
+      "structural_fire_protection": 67,
+      "mechanical_couplers": 70
+    },
+    "input_fields": [
+      "ProductName"
+    ],
+    "excluded_fields": [
+      "NameofManufacturer",
+      "MaterialCategory",
+      "ProductCategory",
+      "Application"
+    ]
+  },
+  "split": {
+    "selection_rule": "first eligible GroupShuffleSplit seed in [42, 241] using only count/class minima",
+    "seed": 237,
+    "manifest_sha256": "2f2d55331d62d872b976525c90f01c6a2d7bba41cab32a253ea99e2a8c58f73b",
+    "counts": {
+      "train": {
+        "rows": 406,
+        "groups": 140,
+        "classes": {
+          "concrete_admixtures": 38,
+          "fire_stop_sealing": 176,
+          "structural_fixing": 126,
+          "structural_fire_protection": 32,
+          "mechanical_couplers": 34
+        }
+      },
+      "calibration": {
+        "rows": 102,
+        "groups": 47,
+        "classes": {
+          "structural_fixing": 21,
+          "concrete_admixtures": 19,
+          "fire_stop_sealing": 33,
+          "mechanical_couplers": 13,
+          "structural_fire_protection": 16
+        }
+      },
+      "test": {
+        "rows": 155,
+        "groups": 63,
+        "classes": {
+          "structural_fire_protection": 19,
+          "fire_stop_sealing": 75,
+          "structural_fixing": 26,
+          "mechanical_couplers": 23,
+          "concrete_admixtures": 12
+        }
+      }
+    }
+  },
+  "test_predictions": {
+    "tfidf_taxonomy_retrieval": [
+      {
+        "id": "02de84b618e173785438",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "04f8bd15c3d375b14f6d",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "06d1848dd9573b7a0563",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "0b2e48a5ecdb28a4b628",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "0b540b2bad69e25bc788",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "10d0038287637cede494",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "11d1003b1e91088f624a",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "12beaf69658c6815b056",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "1437959a09b2803db4dd",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "14b647c81368304da1b5",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "15e8a18a7b23bc044ae2",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "17fea5967155cf959dd2",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "1b00648a8bb264cf17f4",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "1b12d958b718279ba7e0",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "1b5fef053e13a9183da5",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "20acf77031d8d10a4f93",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "20db9abbe27ce48bedbc",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "21ed022e9a0b8a4dc088",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "25fd986aec18b8f104fc",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "266988cbf824dbe38542",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "2672b8d62d1f6f4973cb",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "2828e3b2babeb7c92963",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "28fae3f8b26202680412",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "29687ea7659071e9a327",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "29dd664974a8a5ada011",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "2dfba203e52008909d97",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "2e66be0a6acc89975c58",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "31200ff3431ef7498521",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "339d18d6146eb6b6f979",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "370ae390e5d7ae44561e",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "37d931a86ac8c3b7ab5e",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "393adb25cf17f6fb6240",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "39a471121f59099b6f81",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3bd8b34a14cfa3ab5994",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3c638341ca3da5e59b33",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3eb137fca66b539b1555",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3fa19f792c2943ec567a",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3ffdddf342be717ab764",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "405562a2e9379a728d91",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "4106adbf4b4ab82620f8",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "44387ec21b827f85fe9b",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "44ec4124601d3c36bfda",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "44f3e234914c61cc16cc",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "4781a2cd401dfaffa05e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "483a7540474b5d180a18",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "48669673d55e4178b8f9",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "4de6068bbae61f63a573",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "4eca8bee0d79aa9515e4",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "52693a0574d19642e8d1",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "5283ddfd004eb0195038",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "54312b7294a126a1d05f",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "5667487f071e2392cddc",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "5dfad36fbd3288fa4220",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "6273aa8fcf21eba673f9",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "62b6186c87a9ce923278",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "66559b21bbba3ca64ca0",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "67b224eec9ddc704616a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "6b37d6321b43a07e517e",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "6b61dcb61fb82b044aa9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "6e5be1901fd3940e208a",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "6ed01e938456025eaf6a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "7216578b705fdd834cb3",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "722d0b11d2ca44d972f7",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "725b89f686cf1e02fe98",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "74deafddd595ce94ab52",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "752b7c2e7b36de7480a1",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "752d83f52b1f775b6a1a",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "777725935dbf1351afc9",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "79d8502ff5a48b152f8d",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "802590a9ed4b6bfddb6f",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "806fe18685e37715eeaa",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "82bd81126f1fd2c511b5",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "88d7f629a1224ed326da",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "8a654a7c104383ea8690",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "8af75a59032d6bc7fe1c",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "927863d94d7ea1b4fd68",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "92a636e96d0cd8f93b29",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "947437494b104b536e41",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "95beb6d70bb650d2c6e0",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9612365be156fc13bba4",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "970c955add3c5d8d2193",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "97195f6d79179b4ef3c3",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "97938f779b00871525c4",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "9a5e39e0b76a1826cd25",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9b2140a186e57a9f50bb",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9b4c099182be2cb33346",
+        "expected": "mechanical_couplers",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "9b5fe7255569bd51185d",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9e2845c716b0e455ec76",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9e8a8899c9cbc1695114",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a6fbf8b3b139239f76c3",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a7290ab3fd22dff22fa0",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a76830289b30cfd34b70",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a7b6f4689f140a1d8294",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a87687b2152f215f4ff9",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a917cb6678aeb57caf41",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a961796c9ad413b61f76",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "aa6d27b082449aae6510",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "ab8edf4218f749176d6f",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "accbb333d325b6024242",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "ad26623dfcf5792b8ecf",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "addb144ae5987cccbf7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "af94e147ba06ea8b5670",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "b00e586ad8d482a035f3",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "b2b768b040d2655dd05b",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "b320bc6db60a219fdcd2",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "b79a65b4e828c7603aa0",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "b99789929e3d04010d1e",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "b9edfec3fb722dfdfa07",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "ba435be3b160a14a9d96",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "bafda4955bdc24e39fb8",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "bbebbae7a3d5939ee0da",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "bf4538cdf124fad2b21d",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c01d628971bf08da085d",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c0ba7c88d778b7d98a6a",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c29bff612a270028f055",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "c3170874fd4aa1b03d3c",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c33cfa87564b86552f7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c3c995cc33528b6ed875",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c536dcc077b8ac2c2c3d",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c68d8c58c647efdce25a",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c75a103b953317352ba4",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c7fd85ed081d6b11e4a1",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "cb954daec138a3bb2e77",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "cd5b1df6f8854fa251d2",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "ce81735f8b29b2e1ddca",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "cebacf0af89b28fb4ede",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "cf42a0cc7b16f9f86b8f",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "cfb7cfff376ac19dfdee",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "d07c36f6e708f227cea2",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "d193a3227c51b6b1fd7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "d44aca868b93f6d0a63f",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "d4b27f01e6bf2d56b1a7",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "d978f5ada13c7cf7cbd0",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "da62cb1bdd19453ee9e5",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "daf45c8104fcd0b7aba2",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "db245172615a698b5062",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "db90393df06f0d12c25a",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "def970f6972b2e4a4c50",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "e678613ecc3e77af5a2d",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "e73e3fb37492b840e742",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "e81055f2fd3e8b2ef0a9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "e9c70a135b1e217fae1c",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "ea38320114d51ed35fc0",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "ee76b1ebc7968a2054fe",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "ee9e981d1d3b100f7b53",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "effcd1635cadf480b32c",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "f0fcb0c5baa2a5a24a2b",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "f1e13f86993ffeafb5fc",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "f1f4be096ea8e6d87681",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "f6c36d758e3c9fb1dd08",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "f7005fbef43f49b35a79",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f7b1c666cfb65b5fd8ee",
+        "expected": "structural_fixing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "fa7115cab3b24ba1a861",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "fc1d084c4c111cfb9f08",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "fcc3c68d5afac2944e00",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      }
+    ],
+    "trained_tfidf_linear": [
+      {
+        "id": "02de84b618e173785438",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "04f8bd15c3d375b14f6d",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "06d1848dd9573b7a0563",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "0b2e48a5ecdb28a4b628",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "0b540b2bad69e25bc788",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "10d0038287637cede494",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "11d1003b1e91088f624a",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "12beaf69658c6815b056",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "1437959a09b2803db4dd",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "14b647c81368304da1b5",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "15e8a18a7b23bc044ae2",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "17fea5967155cf959dd2",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "1b00648a8bb264cf17f4",
+        "expected": "structural_fixing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "1b12d958b718279ba7e0",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "1b5fef053e13a9183da5",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "20acf77031d8d10a4f93",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "20db9abbe27ce48bedbc",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "21ed022e9a0b8a4dc088",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "25fd986aec18b8f104fc",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "266988cbf824dbe38542",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "2672b8d62d1f6f4973cb",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "2828e3b2babeb7c92963",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "28fae3f8b26202680412",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "29687ea7659071e9a327",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "29dd664974a8a5ada011",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "2dfba203e52008909d97",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "2e66be0a6acc89975c58",
+        "expected": "mechanical_couplers",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "31200ff3431ef7498521",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "339d18d6146eb6b6f979",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "370ae390e5d7ae44561e",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "37d931a86ac8c3b7ab5e",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "393adb25cf17f6fb6240",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "39a471121f59099b6f81",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "3bd8b34a14cfa3ab5994",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "3c638341ca3da5e59b33",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "3eb137fca66b539b1555",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "3fa19f792c2943ec567a",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "3ffdddf342be717ab764",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "405562a2e9379a728d91",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "4106adbf4b4ab82620f8",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "44387ec21b827f85fe9b",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "44ec4124601d3c36bfda",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "44f3e234914c61cc16cc",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "4781a2cd401dfaffa05e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "483a7540474b5d180a18",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "48669673d55e4178b8f9",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "4de6068bbae61f63a573",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "4eca8bee0d79aa9515e4",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "52693a0574d19642e8d1",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "5283ddfd004eb0195038",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "54312b7294a126a1d05f",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "5667487f071e2392cddc",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "5dfad36fbd3288fa4220",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "6273aa8fcf21eba673f9",
+        "expected": "mechanical_couplers",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "62b6186c87a9ce923278",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "66559b21bbba3ca64ca0",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "67b224eec9ddc704616a",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "6b37d6321b43a07e517e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "6b61dcb61fb82b044aa9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "6e5be1901fd3940e208a",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "6ed01e938456025eaf6a",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "7216578b705fdd834cb3",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "722d0b11d2ca44d972f7",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "725b89f686cf1e02fe98",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "74deafddd595ce94ab52",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "752b7c2e7b36de7480a1",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "752d83f52b1f775b6a1a",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "777725935dbf1351afc9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "79d8502ff5a48b152f8d",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "802590a9ed4b6bfddb6f",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "806fe18685e37715eeaa",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "82bd81126f1fd2c511b5",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "88d7f629a1224ed326da",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "8a654a7c104383ea8690",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "8af75a59032d6bc7fe1c",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "927863d94d7ea1b4fd68",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "92a636e96d0cd8f93b29",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "947437494b104b536e41",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "95beb6d70bb650d2c6e0",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "9612365be156fc13bba4",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "970c955add3c5d8d2193",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "97195f6d79179b4ef3c3",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "97938f779b00871525c4",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "9a5e39e0b76a1826cd25",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "9b2140a186e57a9f50bb",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "9b4c099182be2cb33346",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "9b5fe7255569bd51185d",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "9e2845c716b0e455ec76",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "9e8a8899c9cbc1695114",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a6fbf8b3b139239f76c3",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "a7290ab3fd22dff22fa0",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "a76830289b30cfd34b70",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "a7b6f4689f140a1d8294",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "a87687b2152f215f4ff9",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "a917cb6678aeb57caf41",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "a961796c9ad413b61f76",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "aa6d27b082449aae6510",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "ab8edf4218f749176d6f",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "accbb333d325b6024242",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ad26623dfcf5792b8ecf",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "addb144ae5987cccbf7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "af94e147ba06ea8b5670",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "b00e586ad8d482a035f3",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "b2b768b040d2655dd05b",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "b320bc6db60a219fdcd2",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "b79a65b4e828c7603aa0",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "b99789929e3d04010d1e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "b9edfec3fb722dfdfa07",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "ba435be3b160a14a9d96",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "bafda4955bdc24e39fb8",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "bbebbae7a3d5939ee0da",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "bf4538cdf124fad2b21d",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "c01d628971bf08da085d",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "c0ba7c88d778b7d98a6a",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "c29bff612a270028f055",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "c3170874fd4aa1b03d3c",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "c33cfa87564b86552f7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "c3c995cc33528b6ed875",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "c536dcc077b8ac2c2c3d",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c68d8c58c647efdce25a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c75a103b953317352ba4",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "c7fd85ed081d6b11e4a1",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "cb954daec138a3bb2e77",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "cd5b1df6f8854fa251d2",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "ce81735f8b29b2e1ddca",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "cebacf0af89b28fb4ede",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "cf42a0cc7b16f9f86b8f",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "cfb7cfff376ac19dfdee",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "d07c36f6e708f227cea2",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "d193a3227c51b6b1fd7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "d44aca868b93f6d0a63f",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "d4b27f01e6bf2d56b1a7",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "d978f5ada13c7cf7cbd0",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "da62cb1bdd19453ee9e5",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "daf45c8104fcd0b7aba2",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "db245172615a698b5062",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "db90393df06f0d12c25a",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "def970f6972b2e4a4c50",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "e678613ecc3e77af5a2d",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "e73e3fb37492b840e742",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "e81055f2fd3e8b2ef0a9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "e9c70a135b1e217fae1c",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "ea38320114d51ed35fc0",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "ee76b1ebc7968a2054fe",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "ee9e981d1d3b100f7b53",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "effcd1635cadf480b32c",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "f0fcb0c5baa2a5a24a2b",
+        "expected": "mechanical_couplers",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "f1e13f86993ffeafb5fc",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "f1f4be096ea8e6d87681",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f6c36d758e3c9fb1dd08",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "f7005fbef43f49b35a79",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "f7b1c666cfb65b5fd8ee",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "fa7115cab3b24ba1a861",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "fc1d084c4c111cfb9f08",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "fcc3c68d5afac2944e00",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      }
+    ],
+    "frozen_embedding_retrieval": [
+      {
+        "id": "02de84b618e173785438",
+        "expected": "structural_fire_protection",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "04f8bd15c3d375b14f6d",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "06d1848dd9573b7a0563",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "0b2e48a5ecdb28a4b628",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "0b540b2bad69e25bc788",
+        "expected": "structural_fire_protection",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "10d0038287637cede494",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "11d1003b1e91088f624a",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "12beaf69658c6815b056",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "1437959a09b2803db4dd",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "14b647c81368304da1b5",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "15e8a18a7b23bc044ae2",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "17fea5967155cf959dd2",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "1b00648a8bb264cf17f4",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "1b12d958b718279ba7e0",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "1b5fef053e13a9183da5",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "20acf77031d8d10a4f93",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "20db9abbe27ce48bedbc",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "21ed022e9a0b8a4dc088",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "25fd986aec18b8f104fc",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "266988cbf824dbe38542",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "2672b8d62d1f6f4973cb",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "2828e3b2babeb7c92963",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "28fae3f8b26202680412",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "29687ea7659071e9a327",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "29dd664974a8a5ada011",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "2dfba203e52008909d97",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "2e66be0a6acc89975c58",
+        "expected": "mechanical_couplers",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "31200ff3431ef7498521",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "339d18d6146eb6b6f979",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "370ae390e5d7ae44561e",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "37d931a86ac8c3b7ab5e",
+        "expected": "concrete_admixtures",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "393adb25cf17f6fb6240",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "39a471121f59099b6f81",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "3bd8b34a14cfa3ab5994",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "3c638341ca3da5e59b33",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3eb137fca66b539b1555",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3fa19f792c2943ec567a",
+        "expected": "structural_fire_protection",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "3ffdddf342be717ab764",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "405562a2e9379a728d91",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "4106adbf4b4ab82620f8",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "44387ec21b827f85fe9b",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "44ec4124601d3c36bfda",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "44f3e234914c61cc16cc",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "4781a2cd401dfaffa05e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "483a7540474b5d180a18",
+        "expected": "structural_fire_protection",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "48669673d55e4178b8f9",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "4de6068bbae61f63a573",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "4eca8bee0d79aa9515e4",
+        "expected": "concrete_admixtures",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "52693a0574d19642e8d1",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "5283ddfd004eb0195038",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "54312b7294a126a1d05f",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "5667487f071e2392cddc",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "5dfad36fbd3288fa4220",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "6273aa8fcf21eba673f9",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "62b6186c87a9ce923278",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "66559b21bbba3ca64ca0",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "67b224eec9ddc704616a",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "6b37d6321b43a07e517e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "6b61dcb61fb82b044aa9",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "6e5be1901fd3940e208a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "6ed01e938456025eaf6a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "7216578b705fdd834cb3",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "722d0b11d2ca44d972f7",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "725b89f686cf1e02fe98",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "74deafddd595ce94ab52",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "752b7c2e7b36de7480a1",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "752d83f52b1f775b6a1a",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "777725935dbf1351afc9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "79d8502ff5a48b152f8d",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "802590a9ed4b6bfddb6f",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "806fe18685e37715eeaa",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "82bd81126f1fd2c511b5",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "88d7f629a1224ed326da",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "8a654a7c104383ea8690",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "8af75a59032d6bc7fe1c",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "927863d94d7ea1b4fd68",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "92a636e96d0cd8f93b29",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "947437494b104b536e41",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "95beb6d70bb650d2c6e0",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "9612365be156fc13bba4",
+        "expected": "concrete_admixtures",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "970c955add3c5d8d2193",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "97195f6d79179b4ef3c3",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "97938f779b00871525c4",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "9a5e39e0b76a1826cd25",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9b2140a186e57a9f50bb",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "9b4c099182be2cb33346",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9b5fe7255569bd51185d",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "9e2845c716b0e455ec76",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "9e8a8899c9cbc1695114",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a6fbf8b3b139239f76c3",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "a7290ab3fd22dff22fa0",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "a76830289b30cfd34b70",
+        "expected": "concrete_admixtures",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "a7b6f4689f140a1d8294",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "a87687b2152f215f4ff9",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "a917cb6678aeb57caf41",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "a961796c9ad413b61f76",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "aa6d27b082449aae6510",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "ab8edf4218f749176d6f",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "accbb333d325b6024242",
+        "expected": "structural_fire_protection",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "ad26623dfcf5792b8ecf",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "addb144ae5987cccbf7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "af94e147ba06ea8b5670",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "b00e586ad8d482a035f3",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "b2b768b040d2655dd05b",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "b320bc6db60a219fdcd2",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "b79a65b4e828c7603aa0",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "b99789929e3d04010d1e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "b9edfec3fb722dfdfa07",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ba435be3b160a14a9d96",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "bafda4955bdc24e39fb8",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "bbebbae7a3d5939ee0da",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "bf4538cdf124fad2b21d",
+        "expected": "concrete_admixtures",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "c01d628971bf08da085d",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "c0ba7c88d778b7d98a6a",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c29bff612a270028f055",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "c3170874fd4aa1b03d3c",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "c33cfa87564b86552f7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c3c995cc33528b6ed875",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "c536dcc077b8ac2c2c3d",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c68d8c58c647efdce25a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c75a103b953317352ba4",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c7fd85ed081d6b11e4a1",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "cb954daec138a3bb2e77",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "cd5b1df6f8854fa251d2",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ce81735f8b29b2e1ddca",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "cebacf0af89b28fb4ede",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "cf42a0cc7b16f9f86b8f",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "cfb7cfff376ac19dfdee",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "d07c36f6e708f227cea2",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "d193a3227c51b6b1fd7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "d44aca868b93f6d0a63f",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "d4b27f01e6bf2d56b1a7",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "d978f5ada13c7cf7cbd0",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "da62cb1bdd19453ee9e5",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "daf45c8104fcd0b7aba2",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "db245172615a698b5062",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "db90393df06f0d12c25a",
+        "expected": "structural_fire_protection",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "def970f6972b2e4a4c50",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "e678613ecc3e77af5a2d",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "e73e3fb37492b840e742",
+        "expected": "fire_stop_sealing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "e81055f2fd3e8b2ef0a9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "e9c70a135b1e217fae1c",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ea38320114d51ed35fc0",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ee76b1ebc7968a2054fe",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "ee9e981d1d3b100f7b53",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "effcd1635cadf480b32c",
+        "expected": "structural_fire_protection",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "f0fcb0c5baa2a5a24a2b",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "f1e13f86993ffeafb5fc",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f1f4be096ea8e6d87681",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f6c36d758e3c9fb1dd08",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "f7005fbef43f49b35a79",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f7b1c666cfb65b5fd8ee",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "fa7115cab3b24ba1a861",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "fc1d084c4c111cfb9f08",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "fcc3c68d5afac2944e00",
+        "expected": "concrete_admixtures",
+        "predicted": "mechanical_couplers"
+      }
+    ],
+    "laya": [
+      {
+        "id": "02de84b618e173785438",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "04f8bd15c3d375b14f6d",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "06d1848dd9573b7a0563",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "0b2e48a5ecdb28a4b628",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "0b540b2bad69e25bc788",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "10d0038287637cede494",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "11d1003b1e91088f624a",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "12beaf69658c6815b056",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "1437959a09b2803db4dd",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "14b647c81368304da1b5",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "15e8a18a7b23bc044ae2",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "17fea5967155cf959dd2",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "1b00648a8bb264cf17f4",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "1b12d958b718279ba7e0",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "1b5fef053e13a9183da5",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "20acf77031d8d10a4f93",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "20db9abbe27ce48bedbc",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "21ed022e9a0b8a4dc088",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "25fd986aec18b8f104fc",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "266988cbf824dbe38542",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "2672b8d62d1f6f4973cb",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "2828e3b2babeb7c92963",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "28fae3f8b26202680412",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "29687ea7659071e9a327",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "29dd664974a8a5ada011",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "2dfba203e52008909d97",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "2e66be0a6acc89975c58",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "31200ff3431ef7498521",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "339d18d6146eb6b6f979",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "370ae390e5d7ae44561e",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "37d931a86ac8c3b7ab5e",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "393adb25cf17f6fb6240",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "39a471121f59099b6f81",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "3bd8b34a14cfa3ab5994",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "3c638341ca3da5e59b33",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3eb137fca66b539b1555",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "3fa19f792c2943ec567a",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "3ffdddf342be717ab764",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "405562a2e9379a728d91",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "4106adbf4b4ab82620f8",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "44387ec21b827f85fe9b",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "44ec4124601d3c36bfda",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "44f3e234914c61cc16cc",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "4781a2cd401dfaffa05e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "483a7540474b5d180a18",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "48669673d55e4178b8f9",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "4de6068bbae61f63a573",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "4eca8bee0d79aa9515e4",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "52693a0574d19642e8d1",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "5283ddfd004eb0195038",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "54312b7294a126a1d05f",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "5667487f071e2392cddc",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "5dfad36fbd3288fa4220",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "6273aa8fcf21eba673f9",
+        "expected": "mechanical_couplers",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "62b6186c87a9ce923278",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "66559b21bbba3ca64ca0",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "67b224eec9ddc704616a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "6b37d6321b43a07e517e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "6b61dcb61fb82b044aa9",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "6e5be1901fd3940e208a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "6ed01e938456025eaf6a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "7216578b705fdd834cb3",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "722d0b11d2ca44d972f7",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "725b89f686cf1e02fe98",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "74deafddd595ce94ab52",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "752b7c2e7b36de7480a1",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "752d83f52b1f775b6a1a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "777725935dbf1351afc9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "79d8502ff5a48b152f8d",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "802590a9ed4b6bfddb6f",
+        "expected": "mechanical_couplers",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "806fe18685e37715eeaa",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "82bd81126f1fd2c511b5",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "88d7f629a1224ed326da",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "8a654a7c104383ea8690",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "8af75a59032d6bc7fe1c",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "927863d94d7ea1b4fd68",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "92a636e96d0cd8f93b29",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "947437494b104b536e41",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "95beb6d70bb650d2c6e0",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9612365be156fc13bba4",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "970c955add3c5d8d2193",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "97195f6d79179b4ef3c3",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "97938f779b00871525c4",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "9a5e39e0b76a1826cd25",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9b2140a186e57a9f50bb",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9b4c099182be2cb33346",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "9b5fe7255569bd51185d",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "9e2845c716b0e455ec76",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "9e8a8899c9cbc1695114",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a6fbf8b3b139239f76c3",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "a7290ab3fd22dff22fa0",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "a76830289b30cfd34b70",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "a7b6f4689f140a1d8294",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "a87687b2152f215f4ff9",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "a917cb6678aeb57caf41",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "a961796c9ad413b61f76",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "aa6d27b082449aae6510",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "ab8edf4218f749176d6f",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "accbb333d325b6024242",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ad26623dfcf5792b8ecf",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "addb144ae5987cccbf7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "af94e147ba06ea8b5670",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "b00e586ad8d482a035f3",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "b2b768b040d2655dd05b",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "b320bc6db60a219fdcd2",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "b79a65b4e828c7603aa0",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "b99789929e3d04010d1e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "b9edfec3fb722dfdfa07",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ba435be3b160a14a9d96",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "bafda4955bdc24e39fb8",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "bbebbae7a3d5939ee0da",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "bf4538cdf124fad2b21d",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c01d628971bf08da085d",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "c0ba7c88d778b7d98a6a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c29bff612a270028f055",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "c3170874fd4aa1b03d3c",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "c33cfa87564b86552f7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c3c995cc33528b6ed875",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "c536dcc077b8ac2c2c3d",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c68d8c58c647efdce25a",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "c75a103b953317352ba4",
+        "expected": "concrete_admixtures",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "c7fd85ed081d6b11e4a1",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "cb954daec138a3bb2e77",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "cd5b1df6f8854fa251d2",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "ce81735f8b29b2e1ddca",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "cebacf0af89b28fb4ede",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "cf42a0cc7b16f9f86b8f",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "cfb7cfff376ac19dfdee",
+        "expected": "fire_stop_sealing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "d07c36f6e708f227cea2",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "d193a3227c51b6b1fd7e",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "d44aca868b93f6d0a63f",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "d4b27f01e6bf2d56b1a7",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "d978f5ada13c7cf7cbd0",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "da62cb1bdd19453ee9e5",
+        "expected": "mechanical_couplers",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "daf45c8104fcd0b7aba2",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "db245172615a698b5062",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "db90393df06f0d12c25a",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "def970f6972b2e4a4c50",
+        "expected": "structural_fixing",
+        "predicted": "structural_fixing"
+      },
+      {
+        "id": "e678613ecc3e77af5a2d",
+        "expected": "structural_fixing",
+        "predicted": "mechanical_couplers"
+      },
+      {
+        "id": "e73e3fb37492b840e742",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "e81055f2fd3e8b2ef0a9",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "e9c70a135b1e217fae1c",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ea38320114d51ed35fc0",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "ee76b1ebc7968a2054fe",
+        "expected": "structural_fire_protection",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "ee9e981d1d3b100f7b53",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "effcd1635cadf480b32c",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f0fcb0c5baa2a5a24a2b",
+        "expected": "mechanical_couplers",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "f1e13f86993ffeafb5fc",
+        "expected": "structural_fire_protection",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f1f4be096ea8e6d87681",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f6c36d758e3c9fb1dd08",
+        "expected": "fire_stop_sealing",
+        "predicted": "fire_stop_sealing"
+      },
+      {
+        "id": "f7005fbef43f49b35a79",
+        "expected": "fire_stop_sealing",
+        "predicted": "structural_fire_protection"
+      },
+      {
+        "id": "f7b1c666cfb65b5fd8ee",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "fa7115cab3b24ba1a861",
+        "expected": "structural_fire_protection",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "fc1d084c4c111cfb9f08",
+        "expected": "structural_fixing",
+        "predicted": "concrete_admixtures"
+      },
+      {
+        "id": "fcc3c68d5afac2944e00",
+        "expected": "concrete_admixtures",
+        "predicted": "structural_fire_protection"
+      }
+    ]
+  }
+}

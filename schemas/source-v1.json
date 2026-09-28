@@ -1,0 +1,174 @@
+{
+  "$defs": {
+    "Limits": {
+      "additionalProperties": false,
+      "properties": {
+        "deadline_seconds": {
+          "default": 300,
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Deadline Seconds",
+          "type": "integer"
+        },
+        "max_bytes": {
+          "default": 10000000,
+          "maximum": 100000000,
+          "minimum": 1,
+          "title": "Max Bytes",
+          "type": "integer"
+        },
+        "max_pages": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "max_records": {
+          "default": 5000,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Max Records",
+          "type": "integer"
+        },
+        "request_timeout_seconds": {
+          "default": 20,
+          "maximum": 120,
+          "minimum": 1,
+          "title": "Request Timeout Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "Limits",
+      "type": "object"
+    },
+    "Navigation": {
+      "additionalProperties": false,
+      "description": "Follow one next link or discover bounded detail links from each page.",
+      "properties": {
+        "attribute": {
+          "default": "href",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Attribute",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "html_next",
+            "html_links",
+            "json_next",
+            "json_links"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "Navigation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "allowed_domains": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Domains",
+      "type": "array"
+    },
+    "auth_ref": {
+      "anyOf": [
+        {
+          "pattern": "^env:[A-Z][A-Z0-9_]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Auth Ref"
+    },
+    "id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "title": "Id",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/Limits"
+    },
+    "min_interval_seconds": {
+      "default": 1.0,
+      "maximum": 3600,
+      "minimum": 0.1,
+      "title": "Min Interval Seconds",
+      "type": "number"
+    },
+    "mode": {
+      "default": "html",
+      "enum": [
+        "html",
+        "json",
+        "browser",
+        "pdf"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "navigation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Navigation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "robots_policy": {
+      "const": "respect",
+      "default": "respect",
+      "title": "Robots Policy",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "source/v1",
+      "default": "source/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "url": {
+      "title": "Url",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "url",
+    "allowed_domains"
+  ],
+  "title": "SourceSpec",
+  "type": "object"
+}

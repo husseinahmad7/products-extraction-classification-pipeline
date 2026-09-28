@@ -1,0 +1,375 @@
+{
+  "schema_version": "ai-label-review/v1",
+  "dataset": "products_output.csv",
+  "reviewer": "Codex AI assistant",
+  "review_date": "2026-09-27",
+  "provenance": "ai_reviewed",
+  "method": "52-record systematic spot review of names, descriptions and source URLs against all 399 supplied taxonomy nodes. Predictions were hidden in this review view; some original README examples were previously visible. Not a statistically random accuracy estimate. No live source re-fetch. Remaining records receive structural checks only.",
+  "certification_eligible": false,
+  "records": [
+    {
+      "record_number": 1,
+      "product_name": "SikaWrap®-600 C WV",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Structural carbon-fibre fabric has no explicit FRP reinforcement leaf; surface reinforcement is not necessarily equivalent."
+    },
+    {
+      "record_number": 2,
+      "product_name": "Sika AnchorFix®-2+ Tropical",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Anchoring adhesive is not a hot-applied joint compound; add an anchoring/chemical-fastener category."
+    },
+    {
+      "record_number": 3,
+      "product_name": "SikaGrout®-212 AE",
+      "proposed_type_id": "119480",
+      "decision": "proposed",
+      "rationale": "Description explicitly identifies a non-shrink precision grout."
+    },
+    {
+      "record_number": 8,
+      "product_name": "Sikadur®-42 LE",
+      "proposed_type_id": "119480",
+      "decision": "proposed",
+      "rationale": "Three-part epoxy grouting system matches grout, not a joint sealant."
+    },
+    {
+      "record_number": 16,
+      "product_name": "Sika AnchorFix®-1",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Polyester anchorage adhesive has no explicit adhesive or chemical-anchor leaf."
+    },
+    {
+      "record_number": 36,
+      "product_name": "Sikadur®-42 LP",
+      "proposed_type_id": "119480",
+      "decision": "proposed",
+      "rationale": "Explicit multipurpose epoxy grouting system."
+    },
+    {
+      "record_number": 60,
+      "product_name": "Sikacrete® UW-10",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Underwater microconcrete is not necessarily mortar; concrete-repair leaf granularity needs clarification."
+    },
+    {
+      "record_number": 91,
+      "product_name": "Sikaflex®-118 Extreme Grab",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Construction adhesive is distinct from sealant; no explicit construction-adhesive leaf."
+    },
+    {
+      "record_number": 124,
+      "product_name": "Sikaplan® WP 1100-15 HL",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "PVC sheet membrane is not a liquid coating or joint profile; sheet-waterproofing leaf is missing."
+    },
+    {
+      "record_number": 158,
+      "product_name": "SikaProof® ExTape-150",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Butyl adhesive jointing tape is not unambiguously a joint sealing profile; tape category is missing."
+    },
+    {
+      "record_number": 201,
+      "product_name": "Sikafloor®-3240",
+      "proposed_type_id": "119494",
+      "decision": "proposed",
+      "rationale": "Self-smoothing polyurethane resin floor is a liquid-applied floor coating; not an epoxy floor."
+    },
+    {
+      "record_number": 251,
+      "product_name": "Sikament®-600 N",
+      "proposed_type_id": "119466",
+      "decision": "proposed",
+      "rationale": "Superplasticizer is added to fresh concrete, not a post-treatment curing agent; unspecified additive is the available leaf."
+    },
+    {
+      "record_number": 301,
+      "product_name": "Sika® ViscoCrete® RM-880",
+      "proposed_type_id": "119466",
+      "decision": "proposed",
+      "rationale": "Water-reducing and retarding admixture for fresh concrete; not concrete post-treatment."
+    },
+    {
+      "record_number": 351,
+      "product_name": "SikaPlast®-155",
+      "proposed_type_id": "119466",
+      "decision": "proposed",
+      "rationale": "Concrete superplasticizer lacks a specific leaf; unspecified concrete additive fits the supplied taxonomy."
+    },
+    {
+      "record_number": 401,
+      "product_name": "Sarnacol®-2170",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Nitrile-rubber contact adhesive for roof sheets is not itself a coating or sheet membrane."
+    },
+    {
+      "record_number": 451,
+      "product_name": "SikaCeram®-401",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Tile-fixing mortar is not necessarily concrete-repair mortar or floor filler; tile adhesive/mortar leaf is absent."
+    },
+    {
+      "record_number": 501,
+      "product_name": "Sikagard®-1815",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Protective epoxy-polysulfide coating overlaps coating material and paint/lacquer/coating leaves; clarify their boundary."
+    },
+    {
+      "record_number": 551,
+      "product_name": "SikaPlast® GL 114 AE",
+      "proposed_type_id": "119466",
+      "decision": "proposed",
+      "rationale": "Water-reducing superplasticizing concrete admixture; not post-treatment."
+    },
+    {
+      "record_number": 601,
+      "product_name": "SikaPaver®-3937",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Surface block sealer could fit sealant or saturant depending on taxonomy definitions; no unsupported forced leaf."
+    },
+    {
+      "record_number": 651,
+      "product_name": "SikaGrind® AE 5101",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Cement-manufacturing grinding aid/air entrainer is not unambiguously a concrete additive; cement-additive leaf is missing."
+    },
+    {
+      "record_number": 701,
+      "product_name": "Sarnafil® S 327-15 L",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Reinforced PVC roof sheet has no sheet-membrane leaf; it is not liquid coating."
+    },
+    {
+      "record_number": 751,
+      "product_name": "Sika® ViscoCrete® GL 3171",
+      "proposed_type_id": "119466",
+      "decision": "proposed",
+      "rationale": "PCE superplasticizer is mixed into fresh concrete, not applied after curing."
+    },
+    {
+      "record_number": 801,
+      "product_name": "Sika® ViscoCrete® GL 3177",
+      "proposed_type_id": "119466",
+      "decision": "proposed",
+      "rationale": "Ready-mix superplasticizer belongs to available unspecified concrete-additive leaf."
+    },
+    {
+      "record_number": 851,
+      "product_name": "Sika® ViscoCrete® WR-18",
+      "proposed_type_id": "119466",
+      "decision": "proposed",
+      "rationale": "Explicit concrete/mortar superplasticizer; unspecified concrete additive is supported."
+    },
+    {
+      "record_number": 873,
+      "product_name": "DW 37 12-EC C",
+      "proposed_type_id": "116876",
+      "decision": "proposed",
+      "rationale": "12 V cordless drywall screwdriver supports rechargeable quick-assembly screwdriver; no magazine stated."
+    },
+    {
+      "record_number": 881,
+      "product_name": "KNE 16 18.0-EC C",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Cordless sheet nibbler matches both 116902 and duplicate/misspelled 158413; taxonomy needs a canonical ID."
+    },
+    {
+      "record_number": 889,
+      "product_name": "CHE 18.0-EC C",
+      "proposed_type_id": "116863",
+      "decision": "proposed",
+      "rationale": "Cordless rotary hammer fits rechargeable rotary/demolition hammer."
+    },
+    {
+      "record_number": 897,
+      "product_name": "LB 125 18.0-EC C",
+      "proposed_type_id": "116909",
+      "decision": "proposed",
+      "rationale": "Description explicitly says cordless angle grinder."
+    },
+    {
+      "record_number": 905,
+      "product_name": "TJ White 10.8/18.0 S Men",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Heated clothing is not a power tool; no heated-apparel leaf."
+    },
+    {
+      "record_number": 913,
+      "product_name": "TJ 10.8/18.0 M",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Battery-powered jacket needs apparel category; do not force into tool parts."
+    },
+    {
+      "record_number": 921,
+      "product_name": "CI 11 18.0",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Cordless inflator overlaps air-pump and compressed-air-pump leaves; required distinction is undocumented."
+    },
+    {
+      "record_number": 929,
+      "product_name": "Helix paddle HP2",
+      "proposed_type_id": "117010",
+      "decision": "proposed",
+      "rationale": "Mixer paddle is a mixing head accessory; listed tile adhesives/grout are materials it mixes, not the product."
+    },
+    {
+      "record_number": 937,
+      "product_name": "MT 18.0-EC C",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Cordless multitool description does not explicitly establish the specific oscillator leaf; needs tool-motion evidence."
+    },
+    {
+      "record_number": 945,
+      "product_name": "GHT 55 18-EC",
+      "proposed_type_id": "116933",
+      "decision": "proposed",
+      "rationale": "Description explicitly identifies a cordless hedge trimmer."
+    },
+    {
+      "record_number": 953,
+      "product_name": "LKS 65-170 F 1/4",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Laser tripod is a measuring accessory; no specific tripod/measurement-accessory leaf."
+    },
+    {
+      "record_number": 961,
+      "product_name": "PE 8-4 80 230/BS",
+      "proposed_type_id": "116951",
+      "decision": "proposed",
+      "rationale": "Polisher with 230 V model designation supports the electric polisher leaf."
+    },
+    {
+      "record_number": 969,
+      "product_name": "IW 1/2\" 750 18.0-EC C",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Impact wrench is not automatically an impact screwdriver; pistol-grip nutrunner mapping requires a taxonomy convention."
+    },
+    {
+      "record_number": 977,
+      "product_name": "CS 45 18.0-EC C",
+      "proposed_type_id": "116887",
+      "decision": "proposed",
+      "rationale": "Compact cordless circular saw fits rechargeable manual circular saw."
+    },
+    {
+      "record_number": 985,
+      "product_name": "TJ White 10.8/18.0 S Men",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Same heated-jacket product appears under another URL; apparel remains out of taxonomy."
+    },
+    {
+      "record_number": 993,
+      "product_name": "GG 200 18",
+      "proposed_type_id": "116997",
+      "decision": "proposed",
+      "rationale": "Description explicitly says cordless hot glue gun."
+    },
+    {
+      "record_number": 1001,
+      "product_name": "VC 6 L MC 18.0",
+      "proposed_type_id": null,
+      "decision": "insufficient_evidence",
+      "rationale": "Only vacuum leaf requires both rechargeable and wet/dry; description does not establish wet/dry capability."
+    },
+    {
+      "record_number": 1009,
+      "product_name": "IW 1/2\" 1500 18-EC C",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Cordless impact wrench needs an explicit impact-wrench/nutrunner mapping convention."
+    },
+    {
+      "record_number": 1017,
+      "product_name": "TL 4000 18.0/230",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "LED site spotlight with tripod is lighting, not a power tool; lighting leaf is absent."
+    },
+    {
+      "record_number": 1025,
+      "product_name": "PXE 80 12-EC",
+      "proposed_type_id": "158376",
+      "decision": "proposed",
+      "rationale": "Explicit cordless 12 V polisher fits rechargeable polisher, not sander."
+    },
+    {
+      "record_number": 1033,
+      "product_name": "VCE 22 L MC 2x18.0",
+      "proposed_type_id": null,
+      "decision": "insufficient_evidence",
+      "rationale": "Cordless safety vacuum description does not establish wet/dry capability required by available leaf."
+    },
+    {
+      "record_number": 1041,
+      "product_name": "Helix paddle HP3L",
+      "proposed_type_id": "117010",
+      "decision": "proposed",
+      "rationale": "Mixing paddle/head accessory, not the gypsum or coating materials mentioned as uses."
+    },
+    {
+      "record_number": 1049,
+      "product_name": "GBL 790 18-EC",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Leaf blower is not necessarily blower-vac; vacuum capability is not stated."
+    },
+    {
+      "record_number": 1057,
+      "product_name": "PE 14-2 150 230/BS",
+      "proposed_type_id": "116951",
+      "decision": "proposed",
+      "rationale": "230 V variable-speed polisher fits electric polisher."
+    },
+    {
+      "record_number": 1065,
+      "product_name": "CF 18.0/230 BS",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Cordless fan is not a hot-air gun; ventilation/fan leaf is absent."
+    },
+    {
+      "record_number": 1073,
+      "product_name": "Spiral paddle SP",
+      "proposed_type_id": "117010",
+      "decision": "proposed",
+      "rationale": "Spiral mixing paddle is a mixing head, not paint or bitumen listed in applications."
+    },
+    {
+      "record_number": 1081,
+      "product_name": "VLP 18.0 C",
+      "proposed_type_id": null,
+      "decision": "taxonomy_gap",
+      "rationale": "Vacuum lifter is a suction lifting tool, not vacuum cleaner; lifting-tool leaf is absent."
+    },
+    {
+      "record_number": 1095,
+      "product_name": "OSE 2-80 18-EC C",
+      "proposed_type_id": null,
+      "decision": "ambiguous",
+      "rationale": "Orbital sander and random-orbital disc sander are not interchangeable; exact available sander leaf needs clarification."
+    }
+  ]
+}

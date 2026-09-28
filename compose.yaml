@@ -1,0 +1,57 @@
+# Development deployment. TLS, egress isolation and verified backups remain release gates.
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: pipeline
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: pipeline
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pipeline -d pipeline"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  migrate:
+    build: .
+    command: [migrate]
+    environment: &pipeline-env
+      PIPELINE_DATABASE_URL: postgresql+psycopg://pipeline:${POSTGRES_PASSWORD}@postgres:5432/pipeline
+      PIPELINE_ARTIFACT_ROOT: /data/artifacts
+      PIPELINE_ARTIFACT_QUOTA_BYTES: "2000000000"
+    depends_on:
+      postgres: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+  api:
+    build: .
+    environment: *pipeline-env
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: [artifacts:/data]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready',timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+  worker:
+    build: .
+    command: [worker]
+    environment: *pipeline-env
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    volumes: [artifacts:/data]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+volumes:
+  postgres-data:
+  artifacts:

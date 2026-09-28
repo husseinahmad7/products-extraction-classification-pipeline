@@ -1,0 +1,183 @@
+{
+  "schema_version": "legacy-audit/v1",
+  "records": 1095,
+  "vendors": {
+    "Sika": 872,
+    "Flex": 223
+  },
+  "source_hosts": {
+    "gcc.sika.com": 872,
+    "www.flex-tools.com": 223
+  },
+  "taxonomy_nodes": 399,
+  "taxonomy_leaves": 354,
+  "duplicate_taxonomy_names": {
+    "table chop and bevel saw electric": [
+      "116809",
+      "158350"
+    ],
+    "linear grinder rechargeable": [
+      "158393",
+      "158395"
+    ],
+    "router rechargeable": [
+      "116857",
+      "158359"
+    ],
+    "drill rechargeable unspecified": [
+      "116871",
+      "158414"
+    ],
+    "hedge trimmer electric": [
+      "116919",
+      "158383"
+    ],
+    "lawn trimmer electric": [
+      "116924",
+      "158384"
+    ],
+    "blower vac electric": [
+      "116926",
+      "158365"
+    ]
+  },
+  "structural_issue_counts": {
+    "duplicate_brand_product_name": 139,
+    "unknown_or_missing_predicted_id": 18,
+    "duplicate_source_url": 20
+  },
+  "unique_brand_product_names": 1022,
+  "semantic_spot_reviewed": 52,
+  "not_semantically_reviewed": 1043,
+  "ai_review_decisions": {
+    "taxonomy_gap": 16,
+    "proposed": 23,
+    "ambiguous": 11,
+    "insufficient_evidence": 2
+  },
+  "ai_proposal_disagreements": [
+    {
+      "record_number": 3,
+      "product_name": "SikaGrout®-212 AE",
+      "original_type_id": "119483",
+      "ai_proposed_type_id": "119480",
+      "reason": "Description explicitly identifies a non-shrink precision grout."
+    },
+    {
+      "record_number": 8,
+      "product_name": "Sikadur®-42 LE",
+      "original_type_id": "119468",
+      "ai_proposed_type_id": "119480",
+      "reason": "Three-part epoxy grouting system matches grout, not a joint sealant."
+    },
+    {
+      "record_number": 36,
+      "product_name": "Sikadur®-42 LP",
+      "original_type_id": "116977",
+      "ai_proposed_type_id": "119480",
+      "reason": "Explicit multipurpose epoxy grouting system."
+    },
+    {
+      "record_number": 251,
+      "product_name": "Sikament®-600 N",
+      "original_type_id": "119462",
+      "ai_proposed_type_id": "119466",
+      "reason": "Superplasticizer is added to fresh concrete, not a post-treatment curing agent; unspecified additive is the available leaf."
+    },
+    {
+      "record_number": 301,
+      "product_name": "Sika® ViscoCrete® RM-880",
+      "original_type_id": "119462",
+      "ai_proposed_type_id": "119466",
+      "reason": "Water-reducing and retarding admixture for fresh concrete; not concrete post-treatment."
+    },
+    {
+      "record_number": 351,
+      "product_name": "SikaPlast®-155",
+      "original_type_id": "119462",
+      "ai_proposed_type_id": "119466",
+      "reason": "Concrete superplasticizer lacks a specific leaf; unspecified concrete additive fits the supplied taxonomy."
+    },
+    {
+      "record_number": 551,
+      "product_name": "SikaPlast® GL 114 AE",
+      "original_type_id": "119462",
+      "ai_proposed_type_id": "119466",
+      "reason": "Water-reducing superplasticizing concrete admixture; not post-treatment."
+    },
+    {
+      "record_number": 751,
+      "product_name": "Sika® ViscoCrete® GL 3171",
+      "original_type_id": "119462",
+      "ai_proposed_type_id": "119466",
+      "reason": "PCE superplasticizer is mixed into fresh concrete, not applied after curing."
+    },
+    {
+      "record_number": 801,
+      "product_name": "Sika® ViscoCrete® GL 3177",
+      "original_type_id": "119462",
+      "ai_proposed_type_id": "119466",
+      "reason": "Ready-mix superplasticizer belongs to available unspecified concrete-additive leaf."
+    },
+    {
+      "record_number": 851,
+      "product_name": "Sika® ViscoCrete® WR-18",
+      "original_type_id": "119523",
+      "ai_proposed_type_id": "119466",
+      "reason": "Explicit concrete/mortar superplasticizer; unspecified concrete additive is supported."
+    },
+    {
+      "record_number": 889,
+      "product_name": "CHE 18.0-EC C",
+      "original_type_id": "",
+      "ai_proposed_type_id": "116863",
+      "reason": "Cordless rotary hammer fits rechargeable rotary/demolition hammer."
+    },
+    {
+      "record_number": 929,
+      "product_name": "Helix paddle HP2",
+      "original_type_id": "116952",
+      "ai_proposed_type_id": "117010",
+      "reason": "Mixer paddle is a mixing head accessory; listed tile adhesives/grout are materials it mixes, not the product."
+    },
+    {
+      "record_number": 945,
+      "product_name": "GHT 55 18-EC",
+      "original_type_id": "",
+      "ai_proposed_type_id": "116933",
+      "reason": "Description explicitly identifies a cordless hedge trimmer."
+    },
+    {
+      "record_number": 1025,
+      "product_name": "PXE 80 12-EC",
+      "original_type_id": "",
+      "ai_proposed_type_id": "158376",
+      "reason": "Explicit cordless 12 V polisher fits rechargeable polisher, not sander."
+    },
+    {
+      "record_number": 1041,
+      "product_name": "Helix paddle HP3L",
+      "original_type_id": "116952",
+      "ai_proposed_type_id": "117010",
+      "reason": "Mixing paddle/head accessory, not the gypsum or coating materials mentioned as uses."
+    },
+    {
+      "record_number": 1073,
+      "product_name": "Spiral paddle SP",
+      "original_type_id": "116952",
+      "ai_proposed_type_id": "117010",
+      "reason": "Spiral mixing paddle is a mixing head, not paint or bitumen listed in applications."
+    }
+  ],
+  "certification_eligible": false,
+  "blockers": [
+    "Only two vendor/source groups; at least five independent groups are required.",
+    "AI spot reviews are not independent human-reviewed ground truth.",
+    "Duplicate products and ambiguous/missing taxonomy leaves need adjudication before splitting."
+  ],
+  "input_sha256": {
+    "products_output.csv": "0e9942f7a7ec079cec47d9caef66ebcfae2a12dd8bfe6c7757fba08eb5dfd5fb",
+    "classification_tree.csv": "f6307b9c575416a0d4d2e8566c412093cbc87e6c4b531cf28a70eeab01c12fa1",
+    "benchmarks\\review\\ai-spot-review.json": "34550821898cf572884d416f317e72066f5775acf8363cdc5d8d8920b87058e6"
+  }
+}

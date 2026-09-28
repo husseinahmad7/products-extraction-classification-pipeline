@@ -1,0 +1,94 @@
+{
+  "schema_version": "kaggle-smoke/v1",
+  "kind": "infrastructure_smoke",
+  "quality_benchmark": false,
+  "model": "convaiinnovations/laya",
+  "revision": "55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851",
+  "runtime": "laya==0.3.20",
+  "data": "synthetic smoke cases; no gold-label claims",
+  "status": "completed",
+  "python": "3.12.13",
+  "torch": "2.10.0+cu128",
+  "cuda_available": true,
+  "gpu": "Tesla T4",
+  "cold_load_seconds": 36.90604280100001,
+  "latency_ms": [
+    780.5669910000006,
+    35.446139000015364,
+    35.045031000009885
+  ],
+  "predictions": [
+    {
+      "model": "laya-rl-agent",
+      "answers": {
+        "category": {
+          "type": "choice",
+          "choice": "power_tool",
+          "probabilities": {
+            "power_tool": 0.9451,
+            "sealant": 0.0194,
+            "other": 0.0356
+          },
+          "confidence": 0.7739,
+          "answer_confidence": 0.9451,
+          "action": {
+            "act_probability": 1
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 69,
+        "output_tokens": 0
+      }
+    },
+    {
+      "model": "laya-rl-agent",
+      "answers": {
+        "category": {
+          "type": "choice",
+          "choice": "sealant",
+          "probabilities": {
+            "power_tool": 0.0124,
+            "sealant": 0.9726,
+            "other": 0.015
+          },
+          "confidence": 0.8684,
+          "answer_confidence": 0.9726,
+          "action": {
+            "act_probability": 1
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 71,
+        "output_tokens": 0
+      }
+    },
+    {
+      "model": "laya-rl-agent",
+      "answers": {
+        "category": {
+          "type": "choice",
+          "choice": "other",
+          "probabilities": {
+            "power_tool": 0.1747,
+            "sealant": 0.1504,
+            "other": 0.6749
+          },
+          "confidence": 0.2217,
+          "answer_confidence": 0.6749,
+          "action": {
+            "act_probability": 1
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 65,
+        "output_tokens": 0
+      }
+    }
+  ],
+  "peak_gpu_memory_bytes": 2441429504,
+  "notebook": "https://www.kaggle.com/code/husseiniahmad/evidence-pipeline-laya-remote-smoke",
+  "notebook_version": 2
+}

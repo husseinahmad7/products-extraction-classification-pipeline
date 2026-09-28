@@ -1,0 +1,380 @@
+{
+  "schema_version": "postgres-integration/v1",
+  "status": "completed",
+  "measured_on": "kaggle",
+  "source_bundle_sha256": "858e93d805f6c26b7899f571362320db91d11a40ce2dc41711663c786068304b",
+  "contains_datasets": false,
+  "contains_credentials": false,
+  "model_downloads_or_inference": false,
+  "scope": "disposable loopback-only PostgreSQL; database-only restore, not full service recovery",
+  "stages": [
+    {
+      "name": "install_uv",
+      "exit_code": 0,
+      "elapsed_seconds": 7.227,
+      "output_tail": "   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.0/20.0 MB 49.2 MB/s eta 0:00:00\n"
+    },
+    {
+      "name": "locked_environment",
+      "exit_code": 0,
+      "elapsed_seconds": 4.278,
+      "output_tail": "nloaded sqlalchemy\n Downloaded psycopg-binary\n Downloaded ruff\n Downloaded mypy\n Downloaded botocore\n      Built products-extraction-classification-pipeline @ file:///tmp/evidence-pg-integration-c6dy75w4/project\nPrepared 65 packages in 1.68s\nInstalled 65 packages in 938ms\n + alembic==1.20.0\n + annotated-doc==0.0.5\n + annotated-types==0.8.0\n + anyio==4.15.1\n + argon2-cffi==25.1.0\n + argon2-cffi-bindings==26.1.0\n + attrs==26.1.0\n + beautifulsoup4==4.15.0\n + boto3==1.43.103\n + botocore==1.43.103\n + build==1.6.1\n + certifi==2026.7.22\n + cffi==2.1.1\n + click==8.5.0\n + coverage==7.16.1\n + fastapi==0.141.1\n + h11==0.16.0\n + httpcore==1.0.9\n + httpx==0.28.1\n + hypothesis==6.168.1\n + idna==3.20\n + iniconfig==2.3.0\n + jmespath==1.1.0\n + jsonschema==4.26.0\n + jsonschema-specifications==2025.9.1\n + librt==0.15.0\n + mako==1.4.3\n + markupsafe==3.0.3\n + mypy==1.20.2\n + mypy-extensions==1.1.0\n + packaging==26.3\n + pathspec==1.1.1\n + pluggy==1.6.0\n + products-extraction-classification-pipeline==0.1.0a1 (from file:///tmp/evidence-pg-integration-c6dy75w4/project)\n + psycopg==3.3.6\n + psycopg-binary==3.3.6\n + pycparser==3.0\n + pydantic==2.13.5\n + pydantic-core==2.46.5\n + pygments==2.21.0\n + pyproject-hooks==1.3.3\n + pytest==8.4.2\n + pytest-cov==6.3.0\n + python-dateutil==2.9.0.post0\n + pyyaml==6.0.3\n + referencing==0.37.0\n + regex==2026.9.10\n + rfc8785==0.1.4\n + rpds-py==2026.6.3\n + ruff==0.16.9\n + s3transfer==0.19.2\n + six==1.17.0\n + sortedcontainers==2.4.0\n + soupsieve==2.10\n + sqlalchemy==2.1.1\n + starlette==1.7.0\n + types-beautifulsoup4==4.12.0.20250516\n + types-html5lib==1.1.11.20260518\n + types-jsonschema==4.26.0.20260518\n + types-pyyaml==6.0.12.20260906\n + types-webencodings==0.6.0.20260907\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + urllib3==2.8.0\n + uvicorn==0.54.0\n"
+    },
+    {
+      "name": "runtime_versions",
+      "exit_code": 0,
+      "elapsed_seconds": 0.094,
+      "output_tail": "{\"python\": \"3.13.15 (main, Sep  1 2026, 14:18:08) [Clang 22.1.3 ]\", \"packages\": {\"sqlalchemy\": \"2.1.1\", \"psycopg\": \"3.3.6\", \"alembic\": \"1.20.0\", \"pytest\": \"8.4.2\"}}\n"
+    },
+    {
+      "name": "apt_update",
+      "exit_code": 0,
+      "elapsed_seconds": 6.395,
+      "output_tail": "W: Skipping acquire of configured file 'main/source/Sources' as repository 'https://r2u.stat.illinois.edu/ubuntu jammy InRelease' does not seem to provide it (sources.list entry misspelt?)\n"
+    },
+    {
+      "name": "install_postgres",
+      "exit_code": 0,
+      "elapsed_seconds": 25.788,
+      "output_tail": "lementation ... posix\nselecting default max_connections ... 100\nselecting default shared_buffers ... 128MB\nselecting default time zone ... Etc/UTC\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\nupdate-alternatives: using /usr/share/postgresql/14/man/man1/postmaster.1.gz to provide /usr/share/man/man1/postmaster.1.gz (postmaster.1.gz) in auto mode\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\nSetting up postgresql (14+238) ...\nProcessing triggers for man-db (2.10.2-1) ...\nProcessing triggers for libc-bin (2.35-0ubuntu3.13) ...\n/sbin/ldconfig.real: /usr/local/lib/libtbbbind_2_5.so.3 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libur_adapter_level_zero.so.0 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libtbbbind.so.3 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libur_adapter_level_zero_v2.so.0 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libtbbbind_2_0.so.3 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libur_loader.so.0 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libtbb.so.12 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libumf.so.1 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libtcm_debug.so.1 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libur_adapter_opencl.so.0 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libtbbmalloc_proxy.so.2 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libtcm.so.1 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libtbbmalloc.so.2 is not a symbolic link\n\n/sbin/ldconfig.real: /usr/local/lib/libhwloc.so.15 is not a symbolic link\n\n"
+    },
+    {
+      "name": "initialize_postgres",
+      "exit_code": 0,
+      "elapsed_seconds": 6.022,
+      "output_tail": "The files belonging to this database system will be owned by user \"postgres\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are disabled.\n\nfixing permissions on existing directory /tmp/evidence-pg-cluster-daq5lpu_ ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default max_connections ... 100\nselecting default shared_buffers ... 128MB\nselecting default time zone ... Etc/UTC\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n\nSuccess. You can now start the database server using:\n\n    /usr/lib/postgresql/14/bin/pg_ctl -D /tmp/evidence-pg-cluster-daq5lpu_ -l logfile start\n\n"
+    },
+    {
+      "name": "start_postgres",
+      "exit_code": 0,
+      "elapsed_seconds": 0.116,
+      "output_tail": "waiting for server to start.... done\nserver started\n"
+    },
+    {
+      "name": "create_database",
+      "exit_code": 0,
+      "elapsed_seconds": 1.792,
+      "output_tail": ""
+    },
+    {
+      "name": "postgres_version",
+      "exit_code": 0,
+      "elapsed_seconds": 0.012,
+      "output_tail": "PostgreSQL 14.24 (Ubuntu 14.24-0ubuntu0.22.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit\n"
+    },
+    {
+      "name": "migrate",
+      "exit_code": 0,
+      "elapsed_seconds": 2.693,
+      "output_tail": ""
+    },
+    {
+      "name": "migrate_repeat",
+      "exit_code": 0,
+      "elapsed_seconds": 0.753,
+      "output_tail": ""
+    },
+    {
+      "name": "schema_drift_check",
+      "exit_code": 0,
+      "elapsed_seconds": 0.868,
+      "output_tail": "No new upgrade operations detected.\n"
+    },
+    {
+      "name": "postgres-primary",
+      "exit_code": 0,
+      "elapsed_seconds": 4.192,
+      "output_tail": ".......                                                                  [100%]\n----------- generated xml file: /kaggle/working/postgres-primary.xml -----------\n7 passed in 2.83s\n"
+    },
+    {
+      "name": "postgres-quota-repeat-1",
+      "exit_code": 0,
+      "elapsed_seconds": 1.926,
+      "output_tail": ".                                                                        [100%]\n------- generated xml file: /kaggle/working/postgres-quota-repeat-1.xml --------\n1 passed, 6 deselected in 1.03s\n"
+    },
+    {
+      "name": "postgres-quota-repeat-2",
+      "exit_code": 0,
+      "elapsed_seconds": 1.264,
+      "output_tail": ".                                                                        [100%]\n------- generated xml file: /kaggle/working/postgres-quota-repeat-2.xml --------\n1 passed, 6 deselected in 0.46s\n"
+    },
+    {
+      "name": "postgres-quota-repeat-3",
+      "exit_code": 0,
+      "elapsed_seconds": 1.255,
+      "output_tail": ".                                                                        [100%]\n------- generated xml file: /kaggle/working/postgres-quota-repeat-3.xml --------\n1 passed, 6 deselected in 0.44s\n"
+    },
+    {
+      "name": "postgres-quota-repeat-4",
+      "exit_code": 0,
+      "elapsed_seconds": 1.374,
+      "output_tail": ".                                                                        [100%]\n------- generated xml file: /kaggle/working/postgres-quota-repeat-4.xml --------\n1 passed, 6 deselected in 0.45s\n"
+    },
+    {
+      "name": "postgres-quota-repeat-5",
+      "exit_code": 0,
+      "elapsed_seconds": 1.379,
+      "output_tail": ".                                                                        [100%]\n------- generated xml file: /kaggle/working/postgres-quota-repeat-5.xml --------\n1 passed, 6 deselected in 0.46s\n"
+    },
+    {
+      "name": "database_backup",
+      "exit_code": 0,
+      "elapsed_seconds": 0.11,
+      "output_tail": ""
+    },
+    {
+      "name": "create_restore_database",
+      "exit_code": 0,
+      "elapsed_seconds": 2.11,
+      "output_tail": ""
+    },
+    {
+      "name": "database_restore",
+      "exit_code": 0,
+      "elapsed_seconds": 0.332,
+      "output_tail": ""
+    },
+    {
+      "name": "restored_schema_drift_check",
+      "exit_code": 0,
+      "elapsed_seconds": 0.775,
+      "output_tail": "No new upgrade operations detected.\n"
+    },
+    {
+      "name": "postgres-restored",
+      "exit_code": 0,
+      "elapsed_seconds": 2.973,
+      "output_tail": ".......                                                                  [100%]\n---------- generated xml file: /kaggle/working/postgres-restored.xml -----------\n7 passed in 2.20s\n"
+    },
+    {
+      "name": "stop_postgres",
+      "exit_code": 0,
+      "elapsed_seconds": 0.408,
+      "output_tail": "waiting for server to shut down.... done\nserver stopped\n"
+    }
+  ],
+  "test_suites": [
+    {
+      "name": "postgres-primary",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "postgres-quota-repeat-1",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "postgres-quota-repeat-2",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "postgres-quota-repeat-3",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "postgres-quota-repeat-4",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "postgres-quota-repeat-5",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "postgres-restored",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "source_files": [
+    {
+      "path": "LICENSE",
+      "sha256": "50e6751797c50dedd75ef1b8a0d9e42f5f8472e9fbce91f34718e9f97b0c780a",
+      "bytes": 11324
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "3bca736589c1106cb46244a51d5b70d946e318ce0d39f629500592eedfdcf09e",
+      "bytes": 494
+    },
+    {
+      "path": "README.md",
+      "sha256": "48fcc7e686dc9521138f1be8a3ec594d525f469e8aea004ac4b2ed52169904ff",
+      "bytes": 6909
+    },
+    {
+      "path": "alembic.ini",
+      "sha256": "3d890a033c176515b217ba88a4dfcf7ba30a64dbe98b35289e472f93c9f8a095",
+      "bytes": 91
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "a7425235950a79bfc73c61335733fb1f90a283c4155c0a0002f80c00bc8980f9",
+      "bytes": 1783
+    },
+    {
+      "path": "src/product_pipeline/__init__.py",
+      "sha256": "a624293e22d1a24f9af40a7c6aa288dfd07ba549a1ba703823c6a6f817388cef",
+      "bytes": 365
+    },
+    {
+      "path": "src/product_pipeline/acquisition.py",
+      "sha256": "d7d0de6b700a199326e4e47c004e571d43b16fbfd3f1db4396d3fff48b80874d",
+      "bytes": 9963
+    },
+    {
+      "path": "src/product_pipeline/benchmark.py",
+      "sha256": "a9a5b2c8199a8af63b0a878318edf51743963d92afa66b4cf5aef4b4077323db",
+      "bytes": 10303
+    },
+    {
+      "path": "src/product_pipeline/classification.py",
+      "sha256": "82a6bd4a49c2b5bc86c57ac2c7fba91c646e0aa1f44b906f7a206619555b4fc0",
+      "bytes": 2508
+    },
+    {
+      "path": "src/product_pipeline/cli.py",
+      "sha256": "d4e8696ef65b06a063199aa45b12db3a644630eb76559ff2019be91a3f604bf0",
+      "bytes": 5643
+    },
+    {
+      "path": "src/product_pipeline/client.py",
+      "sha256": "de6070fc12f09bada9fd5ddef01ef3c5cb7509061dc3773928565e4a89dd17be",
+      "bytes": 1444
+    },
+    {
+      "path": "src/product_pipeline/compiler.py",
+      "sha256": "72422c8bc08ae7be49281c6132d7c84af651d0cf0f8c33ebf68a88cfd0a8d5e5",
+      "bytes": 6843
+    },
+    {
+      "path": "src/product_pipeline/contracts.py",
+      "sha256": "c18d14af307264142cdb3d07474b3e49786cde784be41804c67b591b79cd4e65",
+      "bytes": 11934
+    },
+    {
+      "path": "src/product_pipeline/engine.py",
+      "sha256": "ee76c4d2a6b8d2b0df8a74967c4fd8dccfa373eac0dac80e0806eecc6092ef92",
+      "bytes": 13464
+    },
+    {
+      "path": "src/product_pipeline/errors.py",
+      "sha256": "84e0e7b417315586d7298b04caa7a98f1b1b4c538776fb842195e49734fc410d",
+      "bytes": 571
+    },
+    {
+      "path": "src/product_pipeline/hashing.py",
+      "sha256": "cf0236efcedd604cd7f70d2cf1501f337cf17a7756dd01cfc3947ad9bf3a4d49",
+      "bytes": 278
+    },
+    {
+      "path": "src/product_pipeline/jsonutil.py",
+      "sha256": "58d88e87354c2bb182fee5d121565e82919e14b84acd52601a15e78d1bc889b1",
+      "bytes": 1367
+    },
+    {
+      "path": "src/product_pipeline/server/__init__.py",
+      "sha256": "18400af2de78b45f35343065ea0620ac62434105e1598ee588afb8297feb549a",
+      "bytes": 66
+    },
+    {
+      "path": "src/product_pipeline/server/api.py",
+      "sha256": "02c853512cb488a5baa458d6ecd2c1b92f7eae93c495bb512b122b3bc1c7087c",
+      "bytes": 25863
+    },
+    {
+      "path": "src/product_pipeline/server/artifacts.py",
+      "sha256": "d578e015305b44fac7e26b3f34d5fbd99f64ed632ba9ccda8d09c5494f0963d2",
+      "bytes": 2820
+    },
+    {
+      "path": "src/product_pipeline/server/auth.py",
+      "sha256": "4503b464e2be8a55cc6cb48a2bae54f9917f9ad1e92a2716538ec8aa41f01f39",
+      "bytes": 1695
+    },
+    {
+      "path": "src/product_pipeline/server/db.py",
+      "sha256": "6f0b1d5bf20eed413df58a67c6a6598dc2f29f1cb9130ffbb197b0a26c3c23e6",
+      "bytes": 8655
+    },
+    {
+      "path": "src/product_pipeline/server/middleware.py",
+      "sha256": "387e4bc12b076e7ab4994a4f77cb6b4a8f365b924fe0487f8f8b575316c007df",
+      "bytes": 2980
+    },
+    {
+      "path": "src/product_pipeline/server/migrations/env.py",
+      "sha256": "63840cf381d8add3bfc33c17e63921c8be4d1dcc3d3d130a0845ea11c859a548",
+      "bytes": 856
+    },
+    {
+      "path": "src/product_pipeline/server/migrations/versions/0001_evidence_foundation.py",
+      "sha256": "de9e221370d1a6d057dd4810d1635b1d26f1c38887ef14b505d4ad860a2c9c16",
+      "bytes": 5001
+    },
+    {
+      "path": "src/product_pipeline/server/settings.py",
+      "sha256": "2b7c2df6cf49b0f64e066cc2afd79620c2826e1a59f3f005bd2b408868d8a82d",
+      "bytes": 1429
+    },
+    {
+      "path": "src/product_pipeline/server/worker.py",
+      "sha256": "48fc578f0cab46eceed99827579d4d9218dbe16e3e747e12f3855d966b0512d0",
+      "bytes": 15137
+    },
+    {
+      "path": "src/product_pipeline/storage.py",
+      "sha256": "321b72f9bb8da66151f1bf0191edcb2dd1e02faa0ae27df5852eacc54be0161f",
+      "bytes": 2941
+    },
+    {
+      "path": "tests/conftest.py",
+      "sha256": "22a2eaf881c0d40c0d47e8944a6c147f149b9950b235f381aa716464d1477260",
+      "bytes": 1512
+    },
+    {
+      "path": "tests/test_postgres.py",
+      "sha256": "70d4f3d3cdfa521461fd868cc6b224609058bf477f337f7deec2b5377b80c265",
+      "bytes": 5769
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "687197edae990d9898b4dee4dd566ca8d744bdeedda84085e73eaeb24f5d5b30",
+      "bytes": 696495
+    }
+  ],
+  "runtime": {
+    "python": "3.13.15 (main, Sep  1 2026, 14:18:08) [Clang 22.1.3 ]",
+    "packages": {
+      "sqlalchemy": "2.1.1",
+      "psycopg": "3.3.6",
+      "alembic": "1.20.0",
+      "pytest": "8.4.2"
+    }
+  },
+  "postgres_version": "PostgreSQL 14.24 (Ubuntu 14.24-0ubuntu0.22.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0, 64-bit",
+  "elapsed_seconds": 74.157,
+  "notebook": {
+    "url": "https://www.kaggle.com/code/husseiniahmad/evidence-pipeline-postgresql-integration",
+    "version": 1,
+    "private": true
+  }
+}

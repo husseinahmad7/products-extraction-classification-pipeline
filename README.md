@@ -1,200 +1,111 @@
-# Product Scraper & Classifier - Quick Start Guide
+# Evidence Pipeline
 
-## 🔍 Understanding Classification
+Declarative extraction with field-level evidence, offline replay, and an operator dashboard. Built from the original product-scraping notebook into a Python package and self-hosted service.
 
-see `technical_approach.md`
+**Development alpha — the approved full-release plan is not complete. Do not deploy as a public SaaS yet.** The release workflow fails closed until the missing capability and comparative-benchmark gates are met. See [implementation status](docs/implementation-status.md).
 
-## Quick Start
+The developer-first [GitHub Pages documentation source](site/index.html) has an [authoring and deployment guide](docs/site.md). The public site goes live only after the Pages workflow runs from `main` and the repository is configured for GitHub Actions publishing.
 
-### Prerequisites
-- Python 3.8 or higher
-- Internet connection | Google Colab
-- `classification_tree.csv` file provided
+## What works
 
-### Installation
+- Define sources, schemas and extraction recipes as data; supported new sources do not require site-specific Python classes.
+- Extract from HTML/JSON, rendered-HTML captures, and canonical PDF text blocks. Live acquisition supports bounded HTML/JSON navigation and HTTPS bearer credentials referenced from the environment.
+- Retain content-addressed captures and per-field locators, raw values, transforms, errors and hashes. Replay saved captures without network access.
+- Quarantine invalid/ambiguous identities, compare semantic dataset changes, and require an audited decision for removals.
+- Use a durable job queue with leases, generation fencing, idempotency, optimistic versions, interval schedules, shared origin throttling and quota pause/resume.
+- Manage sources, schemas, taxonomies, proposed recipes, jobs, evidence, reviews, revisions and audit events through the React dashboard.
+- Request taxonomy suggestions without an API key. Suggestions always abstain until a separately calibrated classifier is certified.
 
-just run the jupyter notebook `products_pipeline.ipynb`
+This is configuration-driven within a bounded recipe language, **not a promise to scrape every site without work**. Navigation and environment-referenced bearer authentication cover supported HTML/JSON sources; complex login flows, browser/PDF isolation and several production controls remain unfinished.
 
-**That's it!** The script will:
-1. Scrape products from Sika (from sitemap)
-2. Scrape products from Flex-Tools (by crawling)
-3. Classify each product using the gemini
-4. Export results to `products_output.csv`
+## Offline quick start
 
+Requires Python 3.12 or 3.13. No API key, model weights, GPU, browser, or paid service is needed for these examples.
 
-### Expected Output
-
-```
-INFO - Starting Product Extraction Pipeline
-INFO - Fetching Sika sitemap: https://gcc.sika.com/en/products.sitemap.xml
-INFO - Found 150 product URLs in sitemap
-INFO:logger:Scraping Sika product: https://gcc.sika.com/en/construction/concrete/water-reducers/plasticizers/sika-plastiment-110cx.html
-INFO:tornado.access:200 POST /v1beta/models/gemini-2.5-flash-lite:generateContent?%24alt=json%3Benum-encoding%3Dint (127.0.0.1) 9234.92ms
-INFO:logger:Classified 'Sika® Plastiment®-110 CX' as: Construction technology > Construction chemicals > Concrete additive > Concrete post-treatment agent
-  Confidence: high | Reasoning: The product is explicitly described as a 'water-reducing and retarding concrete admixture'. Option I
-INFO:logger:Scraping Sika product: https://gcc.sika.com/en/construction/concrete/water-reducers/non-pce-based-superplasticizers/sikament-nn-s.html
-INFO:tornado.access:200 POST /v1beta/models/gemini-2.5-flash-lite:generateContent?%24alt=json%3Benum-encoding%3Dint (127.0.0.1) 1898.12ms
-INFO:logger:Classified 'Sikament® NN S' as: Construction technology > Construction chemicals > Concrete additive > Concrete post-treatment agent
-  Confidence: high | Reasoning: The product is described as a 'High Performance Plasticising and Slump Retaining Concrete Admixture'
-INFO:logger:Scraping Sika product: https://gcc.sika.com/en/construction/concrete/water-reducers/non-pce-based-superplasticizers/sikament-r-4-qv-cdstar.html
-INFO:tornado.access:200 POST /v1beta/models/gemini-2.5-flash-lite:generateContent?%24alt=json%3Benum-encoding%3Dint (127.0.0.1) 2148.72ms
-INFO:logger:Classified 'Sikament® R-4 QV CD Star' as: Construction technology > Construction chemicals > Concrete additive > Concrete post-treatment agent
-  Confidence: high | Reasoning: The product is described as a 'High Range Water-Reducing and Slump Retaining Concrete Admixture', wh
-
-2025-10-08 10:35:31 - INFO - Exported 40 products to products_output.csv
+```sh
+python -m pip install -e .
+product-pipeline validate examples/catalog-recipe.yaml
+product-pipeline extract examples/catalog-recipe.yaml examples/catalog.json --output catalog-result.json
+product-pipeline replay examples/catalog-recipe.yaml examples/catalog.json catalog-result.json
 ```
 
-## 📊 Output Structure
+The second example extracts documentation metadata rather than products:
 
-The script generates `products_output.csv` with the following columns:
-
-| Column | Description | Example |
-|--------|-------------|---------|
-| brand | Brand name | Sika, Flex |
-| product_name | Full product name | SikaWrap®-600 C WV |
-| model_article_number | Model/SKU | 600 |
-| category | 2nd level category | Electric tool |
-| subcategory | 3rd level category | Drill (electrical) |
-| type_id | 4th level Type ID | 116752 |
-| classification_path | Full numeric path | 115547.116749.116750.116752 |
-| technical_specs | JSON of specifications | {"thickness": "0.331mm"} |
-| short_description | Brief description | Woven unidirectional... |
-| long_description | Detailed description | SikaWrap®-600 C WV is... |
-| product_image_url | Image URL | https://... |
-| datasheet_url | PDF datasheet URL | https://.../datasheet.pdf |
-| source_url | Original product page | https://gcc.sika.com/... |
-
-## ⚙️ Configuration
-
-### Adjust Number of Products
-```python
-# modify main():
-pipeline.run(max_products_per_site=50) # disabled to scrape all products
+```sh
+product-pipeline extract examples/documentation-recipe.yaml examples/documentation.json --output docs-result.json
 ```
 
-### Change Output Filename
-```python
-pipeline.export_to_csv('my_products.csv')  # Custom filename
-```
-
-### Skip from prevouse
-if you have a dataset with `source_url` we can pass those, and scrap just the new urls:
-```python
-# modify main():
-pipeline = ProductPipeline(CLASSIFICATION_TREE, skip_from_file="products_output_old.csv")
-```
-
-### USAGE EXAMPLE WITH SIMILARITY SEARCH
-adjust the notebook according to the fit the following:
+Python SDK:
 
 ```python
-if __name__ == '__main__':
-    import os
-    
-    print("="*60)
-    print("Gemini Classifier with Similarity Search - Demo")
-    print("="*60)
-    
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-    
-    # Load classification tree
-    tree_df = pd.read_csv('classification_tree.csv')
-    
-    # Create classifier with TF-IDF (fast, no extra dependencies)
-    print("\nOption 1: Using TF-IDF similarity (fast)")
-    classifier_tfidf = GeminiClassifier(
-        GEMINI_API_KEY, 
-        tree_df,
-        use_sentence_transformers=False
-    )
-    
-    # OR: Create classifier with sentence transformers (better but slower)
-    # Requires: pip install sentence-transformers
-    # print("\nOption 2: Using Sentence Transformers (better)")
-    # classifier_st = GeminiClassifier(
-    #     GEMINI_API_KEY, 
-    #     tree_df,
-    #     use_sentence_transformers=True
-    # )
-    
-    # Test classification
-    test_products = [
-        {
-            'name': 'PXE-80 12 EC Cordless Polisher',
-            'description': 'Compact 12V cordless polisher for professional automotive and industrial use',
-            'specs': {
-                'voltage': '12V',
-                'speed': '1200-4500 RPM',
-                'weight': '1.2 kg',
-                'battery': 'Li-ion',
-                'disc_diameter': '80mm'
-            }
-        },
-        {
-            'name': 'SikaWrap-600 C WV Carbon Fiber Fabric',
-            'description': 'Woven unidirectional carbon fibre fabric for structural strengthening',
-            'specs': {
-                'material': 'carbon fiber',
-                'tensile_strength': '4000 N/mm²',
-                'thickness': '0.331 mm',
-                'application': 'structural reinforcement'
-            }
-        }
-    ]
-    
-    print("\n" + "="*60)
-    print("Testing Classification with Similarity Search")
-    print("="*60)
-    
-    for i, product in enumerate(test_products, 1):
-        print(f"\n--- Test Product {i} ---")
-        print(f"Name: {product['name']}")
-        print(f"Description: {product['description']}")
-        
-        # Show simlar categories found
-        product_text = f"{product['name']} {product['description']} {' '.join([f'{k} {v}' for k, v in product['specs'].items()])}"
-        similar_cats = classifier_tfidf._find_similar_categories(product_text, top_k=5)
-        
-        print(f"\nTop 5 Most Similar Categories:")
-        for idx, row in similar_cats.iterrows():
-            print(f"  {row['similarity_score']:.3f} - {classifier_tfidf._get_full_path_names(row['path'])}")
-        
-        # Classify
-        print(f"\nClasifying with Gemini...")
-        type_id, path, full_name = classifier_tfidf.classify(
-            product['name'],
-            product['description'],
-            product['specs'],
-            top_k_categories=20
-        )
-        
-        if type_id:
-            print(f"Classified successfully Type ID: {type_id} Category: {full_name}")
-            
-        else:
-            print("Classification failed")
+from pathlib import Path
+import yaml
+from product_pipeline import Recipe, extract, replay
+
+recipe = Recipe.model_validate(yaml.safe_load(Path("examples/catalog-recipe.yaml").read_text()))
+capture = Path("examples/catalog.json").read_bytes()
+result = extract(capture, recipe, workspace_id="default")
+assert replay(capture, recipe, result, workspace_id="default") == result
+print(result.records[0].data)
 ```
 
+Public contracts are generated in [schemas/](schemas/). Recipes support CSS text/attribute locators, a bounded JSONPath subset, JSON Pointer, JSON-LD and canonical PDF labelled values. Arbitrary Python/JavaScript execution is not part of the recipe language.
 
+## Dashboard and worker
 
-### Test Single Website
-```python
-# Comment out the other scraper in run() method:
-def run(self, max_products_per_site=50):
-    # Only Sika
-    sika_urls = self.sika_scraper.get_product_urls_from_sitemap()
-    for url in sika_urls[:max_products_per_site]: # removed slice to scrape all products
-        # ... process
-    
-    # Comment out Flex-Tools section
-    # logger.info("\n--- Scraping Flex-Tools Products ---")
-    # flex_urls = self.flex_scraper.get_all_product_urls()
-    # ...
+See the [operator runbook](docs/operator-runbook.md) for token bootstrap, local development, PostgreSQL, quota recovery and release setup.
+
+```sh
+uv sync --frozen --extra server --extra dev --python 3.13
+uv run --no-sync product-pipeline migrate
+uv run --no-sync product-pipeline admin-bootstrap
 ```
 
-### Output Example
-```
-INFO:logger:Classified 'Sika AnchorFix®-2+ Tropical' as: Construction technology > Construction chemicals > Joint sealant, water stop, joint profile (building material) > Hot compound (building material)
-  Confidence: high | Reasoning: The product is an anchoring adhesive, which falls under the broader category of construction chemica...
+In separate terminals, start the API, worker and dashboard development server:
+
+```sh
+uv run --no-sync product-pipeline serve
+uv run --no-sync product-pipeline worker
 ```
 
+```sh
+cd dashboard
+npm ci --ignore-scripts
+npm run dev
+```
+
+Open the URL printed by Vite and enter the locally bootstrapped token. Tokens are held in browser memory only. SQLite is a single-process development convenience; it does not establish PostgreSQL concurrency guarantees.
+
+For a PostgreSQL-based development deployment, configure `.env` from `.env.example`, then run `docker compose up --build -d` and bootstrap with `docker compose exec api product-pipeline admin-bootstrap`. The [PostgreSQL 17 integration suite](benchmarks/reports/postgres-integration-pg17.json) passed in a private Kaggle notebook, including process-death recovery, quota races and a database-only restore. Docker/Compose and coordinated database-plus-artifact recovery remain unverified. The supplied Compose stack is **not an Internet-ready production deployment**.
+
+## Classification and Kaggle
+
+The package does not download or load Laya. All model experiments belong in Kaggle through MCP; notebook scripts refuse to run outside `/kaggle/working`. Model caches stay in `/tmp`, outside notebook outputs. Only metrics and review artifacts return to this repository.
+
+The [Laya smoke report](benchmarks/reports/laya-smoke.json) verifies a pinned model loaded and ran on a Kaggle T4; it makes no quality claim. The [benchmark protocol](docs/benchmark-protocol.md) defines independent data splits, calibration, abstention, and promotion criteria. The legacy CSV contains model predictions, not gold labels. See the [AI spot review](benchmarks/review/ai-spot-review.json) and [structural audit](benchmarks/reports/legacy-audit.json).
+
+The completed [exploratory comparison](benchmarks/reports/ai-reviewed-diagnostic.json) used 52 AI-reviewed records, of which only 23 had proposed leaf labels. Agreement on those 23 was 2 for taxonomy TF-IDF, 6 for frozen embeddings, and 0 for Laya with embedding-retrieved candidates. These are small-sample diagnostic agreements, **not independently measured accuracy**. This configuration does not justify enabling Laya in production; the supervised baseline and full independent comparative benchmark for the original two-vendor corpus remain unrun. All 1,095 original rows received a structural audit, but only 52 received a semantic spot review.
+
+A separate [external building-materials diagnostic](benchmarks/reports/external-building-diagnostic.json) ran on Kaggle T4 with 663 deduplicated product titles, manufacturer-disjoint train/calibration/test splits (406/102/155), and five inherited source-list categories. On the 155-title test split, macro-F1 was 0.621 for trained TF-IDF linear, 0.554 for Laya, 0.478 for frozen embeddings and 0.129 for taxonomy TF-IDF. These publisher list labels were **not independently reviewed product-type gold**, and this is a different taxonomy from the original two-vendor corpus. The result does not certify accuracy, enable auto-accept, or clear the full-release gate.
+
+## Development and delivery
+
+```sh
+uv run --no-sync ruff check src tests scripts benchmarks
+uv run --no-sync ruff format --check src tests scripts benchmarks
+uv run --no-sync mypy src/product_pipeline
+uv run --no-sync pytest --cov=product_pipeline
+uv run --no-sync python scripts/export_schemas.py --check
+uv run --no-sync python -m build
+uv run --no-sync python scripts/release_gate.py --expect-blocked
+```
+
+GitHub workflows define Python/OS matrix tests, PostgreSQL checks, MinIO/S3 integration, a Docker Compose smoke run, dashboard and documentation checks, dependency audits and an SBOM. Those new container/object-store jobs are configured but have not run remotely. Signed tags, PyPI OIDC, attestations and signed container digests are configured as a gated release workflow, not already-published artifacts. GitHub Pages publishes static documentation only; no cloud/SaaS deployment is implied.
+
+Python is the reference engine. Rust is not selected or shipped without golden parity and measured throughput/memory benefit. Billing and multi-tenancy are deliberately deferred until product validation.
+
+## Project history and license
+
+The original `products_pipeline.ipynb`, `technical_approach.md`, datasets and images remain unchanged. The original README is preserved in [docs/legacy-notebook.md](docs/legacy-notebook.md).
+
+New project code is Apache-2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE). Third-party models, dependencies and scraped content retain their own licenses/rights. See [SECURITY.md](SECURITY.md) before hosting or collecting data.

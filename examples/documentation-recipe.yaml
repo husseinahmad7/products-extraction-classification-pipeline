@@ -1,0 +1,25 @@
+schema_version: recipe/v1
+source_id: example-documentation
+mode: json
+record_scope: {type: items_path, value: "$.pages[*]"}
+identity_fields: ["/slug"]
+fields:
+  /slug:
+    locator: {type: json_pointer, value: /slug}
+    required: true
+  /title:
+    locator: {type: json_pointer, value: /title}
+    required: true
+  /section:
+    locator: {type: json_pointer, value: /section}
+    required: true
+target:
+  id: documentation-v1
+  definition:
+    type: object
+    additionalProperties: false
+    properties:
+      slug: {type: string}
+      title: {type: string}
+      section: {type: string}
+    required: [slug, title, section]
