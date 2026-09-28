@@ -55,7 +55,7 @@ A disposable PostgreSQL 17 database-only backup/restore was verified on Kaggle; 
 
 ## CI and gated release
 
-- `ci.yml` is configured for Python 3.12/3.13 on Linux/Windows, tests/type/lint/schema drift/build, PostgreSQL migrations/claim/append-only checks, MinIO/S3 integration, a complete Docker Compose smoke run, dashboard and documentation checks, dependency audits and a CycloneDX SBOM. The new container and object-store jobs have not yet run remotely.
+- `ci.yml` runs Python 3.12/3.13 on Linux/Windows, tests/type/lint/schema drift/build, PostgreSQL migrations/claim/append-only checks, S3 integration against a pinned RustFS test container, a complete Docker Compose smoke run, dashboard and documentation checks, dependency audits and a CycloneDX SBOM. These alpha-branch jobs have run remotely; see [implementation status](implementation-status.md) for the exact verification boundary.
 - `release.yml` accepts version tags but requires CI plus a ready manifest and the full comparative Kaggle benchmark. The manifest currently blocks release deliberately.
 - `pages.yml` validates the static documentation site and deploys `site/` on `main` once GitHub Pages is configured with GitHub Actions as its source. See [documentation site setup](site.md); Pages does not host the dashboard or API.
 - Configure protected GitHub environments `pypi` and `ghcr`, an approved PyPI trusted publisher matching repository/workflow/environment, and repository variable `RELEASE_SIGNING_PUBLIC_KEY` containing the release GPG public key. Keep private signing material outside the repository. Create signed tags whose name matches the Python version.

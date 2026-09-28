@@ -100,7 +100,7 @@ uv run --no-sync python -m build
 uv run --no-sync python scripts/release_gate.py --expect-blocked
 ```
 
-GitHub workflows define Python/OS matrix tests, PostgreSQL checks, MinIO/S3 integration, a Docker Compose smoke run, dashboard and documentation checks, dependency audits and an SBOM. Those new container/object-store jobs are configured but have not run remotely. Signed tags, PyPI OIDC, attestations and signed container digests are configured as a gated release workflow, not already-published artifacts. GitHub Pages publishes static documentation only; no cloud/SaaS deployment is implied.
+GitHub workflows run Python/OS matrix tests, PostgreSQL checks, S3 integration against a pinned RustFS test container, a Docker Compose smoke run, dashboard and documentation checks, dependency audits and an SBOM. These alpha-branch jobs have run on GitHub Actions; see the [implementation status](docs/implementation-status.md) for the verification boundary. Signed tags, PyPI OIDC, attestations and signed container digests are configured as a gated release workflow, not already-published artifacts. GitHub Pages publishes static documentation only; no cloud/SaaS deployment is implied.
 
 Python is the reference engine. Rust is not selected or shipped without golden parity and measured throughput/memory benefit. Billing and multi-tenancy are deliberately deferred until product validation.
 

@@ -135,7 +135,7 @@ npm run dev</code></pre>
 
           <section id="delivery" class="doc-section" aria-labelledby="delivery-heading">
             <div class="section-heading"><h2 id="delivery-heading">CI, images, and publication</h2><span class="section-meta">Release engineering</span></div>
-            <p>CI is configured for Python 3.12/3.13 on Linux and Windows, PostgreSQL 17 integration, S3-compatible MinIO checks, a built-container smoke test, dashboard checks, dependency audits, and an SBOM. The version-tag workflow verifies a signed tag and the release manifest before publishing. It remains blocked by unfinished capabilities and the independent benchmark.</p>
+            <p>CI runs Python 3.12/3.13 on Linux and Windows, PostgreSQL 17 integration, S3-compatible RustFS checks, a built-container smoke test, dashboard checks, dependency audits, and an SBOM. The version-tag workflow verifies a signed tag and the release manifest before publishing. It remains blocked by unfinished capabilities and the independent benchmark.</p>
             <p>This GitHub Pages site contains static documentation only. It does not host the operator dashboard or service. To evaluate locally, follow the quickstart above; to operate a development stack, use the runbook. Publishing a Python package or container image also requires protected GitHub environments and registry configuration.</p>
           </section>
 
