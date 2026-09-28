@@ -5,14 +5,14 @@ RUN npm ci --ignore-scripts
 COPY dashboard/ ./
 RUN npm run build
 
-FROM python:3.13-slim-bookworm AS build
+FROM python:3.14-slim-bookworm AS build
 RUN pip install --no-cache-dir uv==0.12.13
 WORKDIR /app
 COPY pyproject.toml uv.lock README.md LICENSE NOTICE ./
 COPY src/ ./src/
 RUN uv sync --frozen --no-dev --extra server --no-editable
 
-FROM python:3.13-slim-bookworm AS runtime
+FROM python:3.14-slim-bookworm AS runtime
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
