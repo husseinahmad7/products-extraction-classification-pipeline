@@ -17,7 +17,7 @@ server = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "sqlalchemy>=2.0.37,<3", "psy
 browser = ["playwright>=1.50,<2"]
 pdf = ["docling>=2.20,<3"]
 ml = ["scikit-learn>=1.6,<2"]
-dev = ["pytest>=8.3,<9", "pytest-cov>=6,<7", "hypothesis>=6.125,<7", "ruff>=0.11,<1", "mypy>=1.15,<2", "build>=1.2,<2", "types-PyYAML", "types-jsonschema", "types-beautifulsoup4"]
+dev = ["pytest>=8.3,<9", "pytest-cov>=6,<7", "hypothesis>=6.125,<7", "ruff>=0.11,<1", "mypy>=1.15,<3", "build>=1.2,<2", "types-PyYAML", "types-jsonschema", "types-beautifulsoup4"]
 
 [project.scripts]
 product-pipeline = "product_pipeline.cli:main"
