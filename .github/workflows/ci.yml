@@ -1,0 +1,185 @@
+name: CI
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  python:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+        with:
+          version: "0.12.13"
+      - run: uv sync --frozen --extra server --extra dev
+      - run: uv run --no-sync ruff check src tests scripts benchmarks
+      - run: uv run --no-sync ruff format --check src tests scripts benchmarks
+      - run: uv run --no-sync mypy src/product_pipeline
+      - run: uv run --no-sync pytest --cov=product_pipeline --cov-report=term-missing
+      - run: uv run --no-sync python scripts/export_schemas.py --check
+      - run: uv run --no-sync python -m build
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: python-${{ matrix.os }}-${{ matrix.python }}
+          path: dist/
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: pipeline
+          POSTGRES_PASSWORD: disposable-ci-password
+          POSTGRES_DB: pipeline_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U pipeline -d pipeline_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PIPELINE_DATABASE_URL: postgresql+psycopg://pipeline:disposable-ci-password@localhost:5432/pipeline_test
+      PIPELINE_TEST_DATABASE_URL: postgresql+psycopg://pipeline:disposable-ci-password@localhost:5432/pipeline_test
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          version: "0.12.13"
+      - run: uv sync --frozen --extra server --extra dev
+      - run: uv run --no-sync product-pipeline migrate
+      - run: uv run --no-sync alembic check
+      - run: uv run --no-sync pytest tests/test_postgres.py -v
+  s3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      AWS_ACCESS_KEY_ID: pipeline-ci
+      AWS_SECRET_ACCESS_KEY: disposable-ci-secret
+      AWS_DEFAULT_REGION: us-east-1
+      PIPELINE_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+      PIPELINE_TEST_S3_BUCKET: pipeline-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          version: "0.12.13"
+      - run: uv sync --frozen --extra server --extra dev
+      - name: Start isolated RustFS with disposable credentials
+        run: >-
+          docker run --detach --name pipeline-ci-s3
+          --publish 127.0.0.1:9000:9000
+          --env RUSTFS_ACCESS_KEY=pipeline-ci
+          --env RUSTFS_SECRET_KEY=disposable-ci-secret
+          --env RUSTFS_SSE_S3_MASTER_KEY=MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+          --env RUSTFS_CONSOLE_ENABLE=false
+          ghcr.io/rustfs/rustfs:1.0.0-glibc@sha256:47c1141822010b2f3d4cbcec1b1f3480b7a2d732696d6eec8bb2a34b04921df3
+      - name: Wait for object store and create bucket
+        run: |
+          for attempt in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:9000/health/ready >/dev/null; then break; fi
+            sleep 2
+          done
+          curl --fail http://127.0.0.1:9000/health/ready
+          uv run --no-sync python - <<'PY'
+          import boto3
+          import os
+
+          boto3.client("s3", endpoint_url=os.environ["PIPELINE_TEST_S3_ENDPOINT"]).create_bucket(
+              Bucket=os.environ["PIPELINE_TEST_S3_BUCKET"]
+          )
+          PY
+      - run: uv run --no-sync pytest tests/test_s3.py -v
+      - if: failure()
+        run: docker logs pipeline-ci-s3
+      - if: always()
+        run: docker rm --force pipeline-ci-s3 || true
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      POSTGRES_PASSWORD: disposable-ci-password
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Validate development stack configuration
+        run: docker compose config --quiet
+      - name: Build and boot complete stack
+        run: docker compose up --build --detach
+      - name: Smoke API, dashboard, CLI and worker
+        run: |
+          for attempt in {1..60}; do
+            if curl --silent --fail http://127.0.0.1:8000/health/ready >/dev/null; then break; fi
+            sleep 3
+          done
+          curl --fail http://127.0.0.1:8000/health/ready
+          curl --fail --silent http://127.0.0.1:8000/ | grep --fixed-strings '<div id="root"></div>'
+          docker compose exec -T api product-pipeline schema recipe >/dev/null
+          docker compose exec -T worker product-pipeline worker --once
+      - if: failure()
+        run: docker compose logs --no-color
+      - if: always()
+        run: docker compose down --volumes --remove-orphans
+  dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npm test
+      - run: npm audit --audit-level=moderate
+  documentation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      - run: python .github/scripts/check_site.py
+  supply-chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          version: "0.12.13"
+      - run: uv export --frozen --extra server --no-dev --no-emit-project --format requirements-txt --output-file requirements-runtime.txt
+      - run: uvx --from pip-audit==2.10.1 pip-audit --requirement requirements-runtime.txt
+      - run: uvx --from cyclonedx-bom==7.4.0 cyclonedx-py requirements requirements-runtime.txt --output-file sbom.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: runtime-sbom
+          path: sbom.json

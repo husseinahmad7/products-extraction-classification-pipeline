@@ -1,0 +1,14 @@
+.git
+.venv*
+.artifacts
+.env*
+**/__pycache__
+**/node_modules
+dashboard/dist
+*.ipynb
+*.csv
+*.log
+.gstack*
+.impeccable
+tests
+dist

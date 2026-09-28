@@ -1,0 +1,9 @@
+Evidence Pipeline
+https://github.com/husseinahmad7/products-extraction-classification-pipeline
+
+This repository contains a Python evidence-first extraction implementation and
+operator dashboard developed from the original product pipeline notebook.
+
+Third-party packages, model weights and source website content are not relicensed
+by this project's Apache-2.0 license. The repository does not distribute Laya or
+embedding model weights. Retain upstream notices when distributing dependencies.

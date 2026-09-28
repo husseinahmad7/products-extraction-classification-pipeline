@@ -1,0 +1,45 @@
+{
+  "schema_version": "release-gate/v1",
+  "status": "blocked",
+  "classification_benchmark": {
+    "status": "not_run",
+    "reason": "Human-reviewed, source-disjoint gold labels and a full comparative Kaggle run are still required.",
+    "notebook": null,
+    "version": null,
+    "report_sha256": null
+  },
+  "rust": {
+    "status": "not_run",
+    "promoted": false
+  },
+  "postgres_integration": {
+    "status": "completed",
+    "database_major": 17,
+    "notebook": "https://www.kaggle.com/code/husseiniahmad/evidence-pipeline-postgresql-integration",
+    "version": 2,
+    "report": "benchmarks/reports/postgres-integration-pg17.json",
+    "report_sha256": "ddc3e108822b3ebd7b0fc571b0dd64049e25c5e08ae41894320ffc91d9f235c9",
+    "scope": "Database claims, process-death fencing, quota races, immutability, migrations and database-only restore; S3/full-service recovery is not verified."
+  },
+  "capabilities": {
+    "live_html": true,
+    "live_json": true,
+    "live_browser": false,
+    "live_pdf": false,
+    "canonical_replay": true,
+    "retained_oci_replay": false,
+    "postgres_integration_verified": true,
+    "artifact_quota_verified": false,
+    "dashboard_e2e_verified": false,
+    "source_pagination": false,
+    "auth_profiles": false,
+    "distributed_throttling": false,
+    "multi_sample_compiler": false,
+    "scheduler": false,
+    "classifier_registry": false,
+    "review_corrections": false,
+    "backup_restore_verified": false,
+    "security_isolation_verified": false
+  },
+  "auto_accept_enabled": false
+}

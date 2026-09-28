@@ -1,0 +1,13 @@
+{
+  "schema_version": "external-diagnostic-attestation/v1",
+  "notebook": "https://www.kaggle.com/code/husseiniahmad/evidence-pipeline-building-comparison",
+  "notebook_version": 1,
+  "notebook_private": true,
+  "script": "benchmarks/kaggle_external_building_diagnostic.py",
+  "script_sha256": "3ad954fb7dab346c3c05a17ff0bce04467edc6a1013e35b759ff19d15679ff56",
+  "report": "benchmarks/reports/external-building-diagnostic.json",
+  "report_sha256": "f346e36a4bdb3276c4b7d2f8b5aff350cec0eefcb7ccbb2569980d302fa88fb4",
+  "contains_model_weights": false,
+  "contains_source_csvs": false,
+  "certification_eligible": false
+}

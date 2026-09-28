@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#172f4c">
+    <meta name="description" content="Evidence Pipeline developer and operator documentation: offline extraction, field evidence, replay, self-hosted alpha operation, and release status.">
+    <title>Documentation · Evidence Pipeline</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to documentation</a>
+    <div class="site-shell">
+      <aside class="sidebar" aria-label="Documentation navigation">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">E</span><span>Evidence<br>Pipeline</span></div>
+        <div class="nav-block">
+          <nav aria-label="On this page">
+            <span class="nav-group">Get started</span>
+            <a href="#quickstart">Offline quickstart</a>
+            <a href="#evidence">Field evidence</a>
+            <a href="#recipes">Recipes and contracts</a>
+            <span class="nav-group">Build and operate</span>
+            <a href="#service">Self-hosted service</a>
+            <a href="#operations">Review and recovery</a>
+            <span class="nav-group">Release</span>
+            <a href="#status">Implementation status</a>
+            <a href="#delivery">CI and publication</a>
+            <a href="#reference">Source reference</a>
+          </nav>
+        </div>
+        <p class="sidebar-foot">Single-workspace developer tool<br><span>Documentation for the development alpha</span></p>
+      </aside>
+
+      <div class="content-shell">
+        <header class="topbar">
+          <span>Developer documentation <span aria-hidden="true">/</span> 0.1.0a1</span>
+          <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline">View repository <span aria-hidden="true">↗</span></a>
+        </header>
+        <main id="main">
+          <div class="intro" id="quickstart">
+            <h1>Extract a record. Inspect the evidence. Replay the result.</h1>
+            <p class="lead">Evidence Pipeline turns a retained HTML, JSON, or canonical PDF capture into schema-validated records with field-level provenance. Start offline with the checked-in examples; then add a source and operate the service when you need durable jobs and review.</p>
+            <p class="release-banner"><span class="status status-pending">Development alpha</span><span>Bounded HTML/JSON acquisition, link discovery, interval scheduling, and offline replay are implemented. Live browser/PDF acquisition, classifier activation, and the release benchmark remain unfinished.</span></p>
+          </div>
+
+          <div class="opening-grid">
+            <section class="quickstart" aria-labelledby="quickstart-heading">
+              <div class="section-heading"><h2 id="quickstart-heading">Run the offline example</h2><span class="section-meta">Python 3.12 or 3.13</span></div>
+              <p>Clone the repository, then run these commands at its root. No account, API key, browser, model, or GPU is needed.</p>
+              <pre><code>python -m pip install -e .
+product-pipeline validate examples/catalog-recipe.yaml
+product-pipeline extract examples/catalog-recipe.yaml examples/catalog.json --output catalog-result.json
+product-pipeline replay examples/catalog-recipe.yaml examples/catalog.json catalog-result.json</code></pre>
+              <p class="quiet">The result file contains records, field evidence, capture and recipe hashes, and any quarantine reasons. A second <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/examples/documentation-recipe.yaml">documentation example</a> exercises the same engine on a different schema.</p>
+            </section>
+
+            <aside class="specimen" aria-labelledby="specimen-heading">
+              <div class="specimen-head"><h2 id="specimen-heading">One field, traceable</h2><span class="status status-derived">Derived</span></div>
+              <p class="specimen-caption">Illustrative field view from the checked-in <code>examples/catalog.json</code> and recipe. Actual output retains capture and result hashes.</p>
+              <dl>
+                <div><dt>Record</dt><dd><code>EX-101</code></dd></div>
+                <div><dt>Field</dt><dd><code>/name</code></dd></div>
+                <div><dt>Value</dt><dd>Example cordless drill</dd></div>
+                <div><dt>Record scope</dt><dd><code>$.items[*]</code></dd></div>
+                <div><dt>Locator</dt><dd><code>/name</code> · JSON Pointer</dd></div>
+                <div><dt>Transform</dt><dd><code>strip</code></dd></div>
+              </dl>
+              <a class="text-link" href="#evidence">How evidence is retained <span aria-hidden="true">→</span></a>
+            </aside>
+          </div>
+
+          <section id="evidence" class="doc-section" aria-labelledby="evidence-heading">
+            <div class="section-heading"><h2 id="evidence-heading">What the result proves</h2><span class="section-meta">Evidence and replay</span></div>
+            <p>Each output field carries its locator, raw value, transform path, outcome, and capture hash. The engine distinguishes missing, null, observed, and derived values. Invalid records and conflicting identities are quarantined instead of being silently published.</p>
+            <div class="three-steps" aria-label="Evidence lifecycle">
+              <div><span class="step-number">1</span><h3>Capture</h3><p>Retain the source bytes under a content hash.</p></div>
+              <div><span class="step-number">2</span><h3>Extract</h3><p>Apply a versioned recipe and validate against the target schema.</p></div>
+              <div><span class="step-number">3</span><h3>Replay</h3><p>Re-run retained bytes and compare deterministic result hashes.</p></div>
+            </div>
+            <p class="note">Offline replay verifies the current engine against retained bytes. Reproducing an old retained OCI runtime is a separate, unfinished release requirement. See the <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/architecture.md">architecture and invariants</a>.</p>
+          </section>
+
+          <section id="recipes" class="doc-section" aria-labelledby="recipes-heading">
+            <div class="section-heading"><h2 id="recipes-heading">Recipes are data</h2><span class="section-meta">Developer reference</span></div>
+            <p>A recipe names the source, record scope, identity fields, locators, transforms, and target JSON Schema. New supported sources can be configured without writing a vendor-specific extractor class. The language is bounded: it does not execute arbitrary Python or JavaScript.</p>
+            <pre><code>mode: json
+record_scope: {type: items_path, value: "$.items[*]"}
+identity_fields: ["/sku"]
+fields:
+  /name:
+    locator: {type: json_pointer, value: /name}
+    transforms: [{op: strip}]
+    required: true</code></pre>
+            <div class="reference-row"><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/tree/main/examples">Browse working examples <span aria-hidden="true">↗</span></a><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/tree/main/schemas">Browse generated schemas <span aria-hidden="true">↗</span></a></div>
+            <p class="note">Supported inputs include offline HTML, JSON, rendered-HTML captures, and canonical PDF text blocks. Live acquisition supports HTML/JSON with bounded link navigation and an HTTPS bearer token from an environment reference. This is not a general login-flow or browser/PDF acquisition system.</p>
+          </section>
+
+          <section id="service" class="doc-section" aria-labelledby="service-heading">
+            <div class="section-heading"><h2 id="service-heading">Run the service locally</h2><span class="section-meta">Operator setup</span></div>
+            <p>The API, durable worker, and React dashboard share one workspace. Use PostgreSQL for multi-worker evaluation; SQLite is a single-process development convenience.</p>
+            <pre><code>uv sync --frozen --extra server --extra dev --python 3.13
+uv run --no-sync product-pipeline migrate
+uv run --no-sync product-pipeline admin-bootstrap
+
+# Start these in separate terminals:
+uv run --no-sync product-pipeline serve
+uv run --no-sync product-pipeline worker
+
+# In dashboard/:
+npm ci --ignore-scripts
+npm run dev</code></pre>
+            <p>Bootstrap prints a token once in an interactive terminal. Open the URL printed by Vite and enter that token. The dashboard holds it in browser memory. For the development Compose stack, set <code>POSTGRES_PASSWORD</code> in <code>.env</code>, run <code>docker compose up --build -d</code>, and bootstrap inside the API container.</p>
+            <p class="note">The Compose stack binds the API to host loopback. It is a development deployment, with no claim of Internet-ready TLS, isolated browser/PDF workers, or coordinated backup. Read the <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/operator-runbook.md">operator runbook</a> before using it with source data.</p>
+          </section>
+
+          <section id="operations" class="doc-section" aria-labelledby="operations-heading">
+            <div class="section-heading"><h2 id="operations-heading">Review and recovery</h2><span class="section-meta">Durable jobs</span></div>
+            <p>Operations return an ID and a state. A successful operation can still produce an invalid recipe or an extraction awaiting human review, so inspect the referenced resource before treating a run as publishable.</p>
+            <div class="table-scroll"><table><caption>Common states and the next operator action</caption><thead><tr><th scope="col">State</th><th scope="col">Meaning</th><th scope="col">Next action</th></tr></thead><tbody>
+              <tr><th scope="row"><span class="status status-neutral">Queued</span></th><td>Waiting for a worker claim.</td><td>Poll the operation.</td></tr>
+              <tr><th scope="row"><span class="status status-pending">Paused</span></th><td>Quota or another explicit hold stopped progress.</td><td>Provision capacity, expand the accounting limit, then resume.</td></tr>
+              <tr><th scope="row"><span class="status status-pending">Review required</span></th><td>A recipe or removal needs a human decision.</td><td>Inspect evidence and record a reasoned approval or rejection.</td></tr>
+              <tr><th scope="row"><span class="status status-failure">Failed</span></th><td>The operation ended with an error.</td><td>Read the error and audit trail before retrying with a new key.</td></tr>
+            </tbody></table></div>
+            <p class="note">Mutations use <code>Idempotency-Key</code>; versioned decisions use the current <code>ETag</code> in <code>If-Match</code>. Reuse the same idempotency key if a network failure leaves a request outcome uncertain. The <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/operator-runbook.md">runbook</a> documents quota and token recovery.</p>
+          </section>
+
+          <section id="status" class="doc-section" aria-labelledby="status-heading">
+            <div class="section-heading"><h2 id="status-heading">Release status</h2><span class="status status-pending">Gate blocked</span></div>
+            <p>This repository is a development alpha. The Python SDK/CLI, evidence engine, PostgreSQL worker, interval scheduler, dashboard, packaging, and guarded release workflow are implemented. The full approved release still requires hardened live browser/PDF acquisition, broader review and storage controls, rendered browser verification, coordinated restore, and an independently adjudicated classification benchmark.</p>
+            <p>Classification suggestions abstain until certification. The 52-record AI-reviewed diagnostic measures agreement with proposals. A separate 663-title building-materials diagnostic used publisher source-list categories and a different taxonomy; its labels were not independently adjudicated release gold. Laya is not promoted. Model experiments run on Kaggle; no model weights are shipped through this site or repository.</p>
+            <div class="reference-row"><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/implementation-status.md">Read exact implementation status <span aria-hidden="true">↗</span></a><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/benchmark-protocol.md">Read benchmark protocol <span aria-hidden="true">↗</span></a></div>
+          </section>
+
+          <section id="delivery" class="doc-section" aria-labelledby="delivery-heading">
+            <div class="section-heading"><h2 id="delivery-heading">CI, images, and publication</h2><span class="section-meta">Release engineering</span></div>
+            <p>CI runs Python 3.12/3.13 on Linux and Windows, PostgreSQL 17 integration, S3-compatible RustFS checks, a built-container smoke test, dashboard checks, dependency audits, and an SBOM. The version-tag workflow verifies a signed tag and the release manifest before publishing. It remains blocked by unfinished capabilities and the independent benchmark.</p>
+            <p>This GitHub Pages site contains static documentation only. It does not host the operator dashboard or service. To evaluate locally, follow the quickstart above; to operate a development stack, use the runbook. Publishing a Python package or container image also requires protected GitHub environments and registry configuration.</p>
+          </section>
+
+          <section id="reference" class="doc-section references" aria-labelledby="reference-heading">
+            <div class="section-heading"><h2 id="reference-heading">Source reference</h2><span class="section-meta">Maintained in the repository</span></div>
+            <ul>
+              <li><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/README.md">README and current quickstart</a></li>
+              <li><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/architecture.md">Architecture and invariants</a></li>
+              <li><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/operator-runbook.md">Operator runbook</a></li>
+              <li><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/implementation-status.md">Implementation and verification status</a></li>
+              <li><a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/SECURITY.md">Security guidance</a></li>
+            </ul>
+          </section>
+        </main>
+        <footer class="footer"><span>Evidence Pipeline · Apache-2.0 project code</span><span>Documentation for a development alpha · <a href="#quickstart">Back to start</a></span></footer>
+      </div>
+    </div>
+  </body>
+</html>
