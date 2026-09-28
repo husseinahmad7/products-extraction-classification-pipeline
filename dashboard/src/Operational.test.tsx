@@ -26,7 +26,7 @@ describe("operator controls", () => {
     const user = userEvent.setup();
     render(<WorkspaceSettings api={new Api("old-token")} epoch={0} onTokenRotated={rotated} />);
     expect(await screen.findByText("200 bytes")).toBeInTheDocument();
-    expect(screen.getByText(/Live acquisition:/)).toHaveTextContent("html, json");
+    expect(screen.getByText(/Live acquisition:/).closest("li")).toHaveTextContent("html, json");
     expect(screen.getByRole("button", { name: "Expand capacity" })).toBeDisabled();
     await user.clear(screen.getByLabelText("New total capacity (bytes)"));
     await user.type(screen.getByLabelText("New total capacity (bytes)"), "300");

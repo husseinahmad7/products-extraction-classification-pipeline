@@ -329,7 +329,9 @@ def extract_pages(
         else:
             records.append(
                 group[0].model_copy(
-                    update={"evidence": [evidence for record in group for evidence in record.evidence]}
+                    update={
+                        "evidence": [evidence for record in group for evidence in record.evidence]
+                    }
                 )
             )
     records.sort(key=lambda record: record.id or "")

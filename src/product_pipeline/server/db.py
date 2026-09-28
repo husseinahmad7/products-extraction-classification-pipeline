@@ -68,7 +68,9 @@ class Job(Base):
     owner: Mapped[str | None] = mapped_column(String(128))
     lease_until: Mapped[datetime | None] = mapped_column(DateTime)
     available: Mapped[datetime] = mapped_column(DateTime, default=now, index=True)
-    created: Mapped[datetime] = mapped_column(DateTime, default=now, server_default="CURRENT_TIMESTAMP")
+    created: Mapped[datetime] = mapped_column(
+        DateTime, default=now, server_default="CURRENT_TIMESTAMP"
+    )
     error: Mapped[dict | None] = mapped_column(JSON)
 
 
@@ -236,9 +238,13 @@ class Database:
             if session.get_bind().dialect.name == "postgresql":
                 session.execute(pg_insert(OriginThrottle).values(**values).on_conflict_do_nothing())
             elif session.get_bind().dialect.name == "sqlite":
-                session.execute(sqlite_insert(OriginThrottle).values(**values).on_conflict_do_nothing())
+                session.execute(
+                    sqlite_insert(OriginThrottle).values(**values).on_conflict_do_nothing()
+                )
             else:
-                raise PipelineError("CAPABILITY_UNSUPPORTED", "origin throttle requires PostgreSQL or SQLite")
+                raise PipelineError(
+                    "CAPABILITY_UNSUPPORTED", "origin throttle requires PostgreSQL or SQLite"
+                )
             row = session.scalar(
                 select(OriginThrottle).where(OriginThrottle.origin == origin).with_for_update()
             )
@@ -269,7 +275,9 @@ class Database:
                 .limit(limit)
             ).all()
             for schedule in rows:
-                active = session.get(Resource, (schedule.workspace, "active_recipe", schedule.source_id))
+                active = session.get(
+                    Resource, (schedule.workspace, "active_recipe", schedule.source_id)
+                )
                 if active is None or active.data.get("recipe_id") != schedule.recipe_id:
                     updated_id = session.scalar(
                         update(Schedule)
@@ -282,7 +290,14 @@ class Database:
                         .returning(Schedule.id)
                     )
                     if updated_id is not None:
-                        audit(session, schedule.workspace, "scheduler", "schedule.paused", schedule.id, {"reason": "RECIPE_NOT_ACTIVE"})
+                        audit(
+                            session,
+                            schedule.workspace,
+                            "scheduler",
+                            "schedule.paused",
+                            schedule.id,
+                            {"reason": "RECIPE_NOT_ACTIVE"},
+                        )
                     continue
                 run_id = uid()
                 updated_id = session.scalar(
@@ -327,7 +342,14 @@ class Database:
                         created=current,
                     )
                 )
-                audit(session, schedule.workspace, "scheduler", "schedule.dispatched", schedule.id, {"run_id": run_id, "operation_id": job_id})
+                audit(
+                    session,
+                    schedule.workspace,
+                    "scheduler",
+                    "schedule.dispatched",
+                    schedule.id,
+                    {"run_id": run_id, "operation_id": job_id},
+                )
                 dispatched += 1
         return dispatched
 
