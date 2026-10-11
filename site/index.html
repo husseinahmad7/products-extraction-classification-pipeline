@@ -23,13 +23,15 @@
             <span class="nav-group">Build and operate</span>
             <a href="#service">Self-hosted service</a>
             <a href="#operations">Review and recovery</a>
+            <a href="#beta">Public-beta foundations</a>
+            <a href="#learning">Remote learning workflow</a>
             <span class="nav-group">Release</span>
             <a href="#status">Implementation status</a>
             <a href="#delivery">CI and publication</a>
             <a href="#reference">Source reference</a>
           </nav>
         </div>
-        <p class="sidebar-foot">Single-workspace developer tool<br><span>Documentation for the development alpha</span></p>
+        <p class="sidebar-foot">Evidence-first developer tool<br><span>Alpha with gated public-beta foundations</span></p>
       </aside>
 
       <div class="content-shell">
@@ -98,14 +100,14 @@ fields:
 
           <section id="service" class="doc-section" aria-labelledby="service-heading">
             <div class="section-heading"><h2 id="service-heading">Run the service locally</h2><span class="section-meta">Operator setup</span></div>
-            <p>The API, durable worker, and React dashboard share one workspace. Use PostgreSQL for multi-worker evaluation; SQLite is a single-process development convenience.</p>
+            <p>Self-hosted admin mode uses one workspace. Optional Neon Auth gives each account a server-derived personal workspace. Use PostgreSQL for multi-worker evaluation; SQLite is a single-process development convenience.</p>
             <pre><code>uv sync --frozen --extra server --extra dev --python 3.13
 uv run --no-sync product-pipeline migrate
 uv run --no-sync product-pipeline admin-bootstrap
 
 # Start these in separate terminals:
 uv run --no-sync product-pipeline serve
-uv run --no-sync product-pipeline worker
+uv run --no-sync product-pipeline worker --forever
 
 # In dashboard/:
 npm ci --ignore-scripts
@@ -124,6 +126,29 @@ npm run dev</code></pre>
               <tr><th scope="row"><span class="status status-failure">Failed</span></th><td>The operation ended with an error.</td><td>Read the error and audit trail before retrying with a new key.</td></tr>
             </tbody></table></div>
             <p class="note">Mutations use <code>Idempotency-Key</code>; versioned decisions use the current <code>ETag</code> in <code>If-Match</code>. Reuse the same idempotency key if a network failure leaves a request outcome uncertain. The <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/operator-runbook.md">runbook</a> documents quota and token recovery.</p>
+          </section>
+
+          <section id="beta" class="doc-section" aria-labelledby="beta-heading">
+            <div class="section-heading"><h2 id="beta-heading">Public-beta foundations</h2><span class="status status-pending">Launch gated</span></div>
+            <p>Optional Neon Auth derives one personal workspace from a verified user JWT. Workspace IDs and operator rights never come from request data. Public HTML/JSON hostnames need an operator decision; credential references, private targets and oversized source limits are rejected.</p>
+            <p>Public workers process bounded batches, checkpoint interrupted acquisition, and exit on idle. Schedule admission reserves budgets before creating jobs and pauses denied schedules. API, jobs, runtime, source and artifact-read budgets are monthly; retained artifacts and metadata have lifetime storage limits. Exhaustion pauses work without deleting evidence or expanding free limits.</p>
+            <pre><code># Public worker; configure Auth/PostgreSQL/storage first.
+product-pipeline worker --batch --max-jobs 3 --max-seconds 120</code></pre>
+            <p class="note">This is not a deployed beta. WASIX compatibility, Neon TLS/cold-start/storage/suspension, email verification, trusted origins and rendered accessibility QA must pass before signup opens. Read the <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/docs/free-beta-hosting.md">hosting gates</a> and <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/dashboard/README.md">Auth configuration</a>. Public liveness does not query PostgreSQL; avoid frequent readiness or dashboard polling.</p>
+          </section>
+
+          <section id="learning" class="doc-section" aria-labelledby="learning-heading">
+            <div class="section-heading"><h2 id="learning-heading">Learn from reviewed evidence</h2><span class="section-meta">Kaggle only</span></div>
+            <p>Correct a label against retained evidence and a taxonomy, with a reason and explicit AI/human provenance. Freeze a hash-bound export; large taxonomies can select up to 1000 latest correction IDs per snapshot. Register remote checkpoint, dataset, calibration and evaluation references. Registration does not download weights, validate model claims, activate inference or certify quality.</p>
+            <p>The Kaggle runner trains TF-IDF, SetFit/BGE-small and full-encoder Laya, and tests GLiClass for runtime categories. Data and weights stay remote; only metrics return. Generic exports require explicit input fields, evidence/taxonomy hashes and source/duplicate-connected training, calibration and test groups.</p>
+            <div class="table-scroll"><table><caption>Exploratory, already-inspected 155-title publisher-labelled test; four-thread Kaggle CPU serving, not Wasmer</caption><thead><tr><th scope="col">Candidate</th><th scope="col">Macro-F1</th><th scope="col">CPU p95</th><th scope="col">RSS</th></tr></thead><tbody>
+              <tr><th scope="row">Trained TF-IDF</th><td>0.621</td><td>1.12 ms</td><td>193 MiB</td></tr>
+              <tr><th scope="row">Trained SetFit</th><td>0.723</td><td>35.99 ms</td><td>1105 MiB</td></tr>
+              <tr><th scope="row">GLiClass-edge</th><td>0.086</td><td>44.20 ms</td><td>1134 MiB</td></tr>
+              <tr><th scope="row">Laya base</th><td>0.554</td><td>925.44 ms</td><td>2663 MiB</td></tr>
+              <tr><th scope="row">Fine-tuned Laya</th><td>0.617–0.654 across repeats</td><td>908.43 ms</td><td>2647 MiB</td></tr>
+            </tbody></table></div>
+            <p class="note">SetFit leads this diagnostic; TF-IDF is cheapest. Fine-tuned Laya still missed an entire category. Inspected publisher labels are not independent certification. Automatic acceptance and promotion remain blocked. <a href="https://github.com/husseinahmad7/products-extraction-classification-pipeline/blob/main/benchmarks/README.md">Read the protocol and exact reports</a>.</p>
           </section>
 
           <section id="status" class="doc-section" aria-labelledby="status-heading">

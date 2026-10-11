@@ -9,11 +9,16 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@neondatabase/auth": "0.5.0-beta",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "lucide-react": "^0.468.0"
   },
+  "overrides": {
+    "source-map-js": "1.2.2"
+  },
   "devDependencies": {
+    "@testing-library/dom": "10.4.2",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.4.0",

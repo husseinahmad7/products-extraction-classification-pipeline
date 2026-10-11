@@ -10,10 +10,20 @@ from .db import Artifact, Database, StorageQuota
 
 
 class QuotaStore:
-    def __init__(self, store, database: Database, workspace: str, limit_bytes: int):
+    def __init__(
+        self,
+        store,
+        database: Database,
+        workspace: str,
+        limit_bytes: int,
+        global_limit_bytes: int | None = None,
+        read_budget_settings=None,
+    ):
         if limit_bytes < 1:
             raise ValueError("artifact quota must be positive")
         self.store, self.db, self.workspace = store, database, workspace
+        self.global_limit_bytes = global_limit_bytes
+        self.read_budget_settings = read_budget_settings
         try:
             with database.sessions.begin() as session:
                 if session.get(StorageQuota, workspace) is None:
@@ -23,10 +33,33 @@ class QuotaStore:
         except IntegrityError:
             # Another process initialized the same workspace.
             pass
+        if global_limit_bytes is not None:
+            if global_limit_bytes < 1:
+                raise ValueError("global artifact quota must be positive")
+            try:
+                with database.sessions.begin() as session:
+                    if session.get(StorageQuota, "__global__") is None:
+                        session.add(
+                            StorageQuota(
+                                workspace="__global__", limit_bytes=global_limit_bytes, used_bytes=0
+                            )
+                        )
+            except IntegrityError:
+                pass
 
     def put(self, data: bytes) -> str:
         key = digest(data)
+        self.reserve_read(len(data))  # Conditional retries can verify existing remote bytes.
         with self.db.sessions.begin() as session:
+            global_quota = None
+            if self.global_limit_bytes is not None:
+                global_quota = session.scalar(
+                    select(StorageQuota)
+                    .where(StorageQuota.workspace == "__global__")
+                    .with_for_update()
+                )
+                if global_quota is None:
+                    raise PipelineError("STATE_CORRUPT", "global artifact quota is missing")
             quota = session.scalar(
                 select(StorageQuota)
                 .where(StorageQuota.workspace == self.workspace)
@@ -36,6 +69,12 @@ class QuotaStore:
                 raise PipelineError("STATE_CORRUPT", "artifact quota is missing")
             existing = session.get(Artifact, (self.workspace, key))
             if existing is None:
+                if global_quota is not None:
+                    if global_quota.used_bytes + len(data) > global_quota.limit_bytes:
+                        raise PipelineError(
+                            "QUOTA_EXCEEDED", "global evidence budget reached; ingestion is paused"
+                        )
+                    global_quota.used_bytes += len(data)
                 if quota.used_bytes + len(data) > quota.limit_bytes:
                     raise PipelineError(
                         "QUOTA_EXCEEDED",
@@ -61,4 +100,19 @@ class QuotaStore:
             row = session.get(Artifact, (self.workspace, key))
             if row is None or row.state != "stored":
                 raise PipelineError("NOT_FOUND", "artifact has not been retained in this workspace")
+            size = row.size
+        self.reserve_read(size)
         return self.store.get(key)
+
+    def reserve_read(self, size: int):
+        if self.read_budget_settings is not None:
+            from .public_beta import reserve
+
+            with self.db.sessions.begin() as session:
+                # Covers the storage read and API delivery; reservations aren't provider billing.
+                reserve(
+                    session,
+                    self.workspace,
+                    {"artifact_read_bytes": 2 * size},
+                    self.read_budget_settings,
+                )

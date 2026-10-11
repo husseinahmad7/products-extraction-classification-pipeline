@@ -1,0 +1,53 @@
+# PENDING COMPATIBILITY TEMPLATE, NOT A DEPLOYED OR VERIFIED RELEASE.
+# The built, locked WASIX package must expose `python` as its default command
+# and as a named command, with product_pipeline installed including [server].
+# Replace owner/package with the actual private-test package identity first.
+# Inject DATABASE/S3/Auth credentials through Wasmer secrets, never this file.
+kind: wasmer.io/App.v0
+owner: YOUR_NAMESPACE
+name: evidence-pipeline-beta
+package: YOUR_NAMESPACE/evidence-pipeline:YOUR_VERIFIED_VERSION
+debug: false
+redirect:
+  force_https: true
+env:
+  PIPELINE_AUTH_MODE: neon
+cli_args:
+  - -m
+  - product_pipeline.cli
+  - serve
+  - --host
+  - 0.0.0.0
+  - --port
+  - "80"
+health_checks:
+  - http:
+      method: get
+      path: /health/live
+      interval: 10m
+      timeout: 15s
+      unhealthy_threshold: 2
+      healthy_threshold: 1
+      expected_status_codes: [200]
+jobs:
+  - name: drain-bounded-batch
+    trigger: 30m
+    action:
+      execute:
+        command: python
+        cli_args:
+          - -m
+          - product_pipeline.cli
+          - worker
+          - --batch
+          - --max-jobs
+          - "3"
+          - --max-seconds
+          - "120"
+        timeout: 180s
+        retries: 0
+        max_schedule_drift: 180s
+
+# No auto-provisioned Wasmer DB, no public bucket, no model weights, and no
+# always-on worker. Migrations are a separate reviewed operator action using
+# a direct Neon connection, not an automatic pre-deployment mutation.

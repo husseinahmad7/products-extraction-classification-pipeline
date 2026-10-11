@@ -32,6 +32,13 @@ jobs:
       - run: uv run --no-sync ruff format --check src tests scripts benchmarks
       - run: uv run --no-sync mypy src/product_pipeline
       - run: uv run --no-sync pytest --cov=product_pipeline --cov-report=term-missing
+      - name: Measure locked native hosting compatibility (not WASIX proof)
+        run: uv run --no-sync python scripts/hosting_probe.py > hosting-native.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: hosting-native-${{ matrix.os }}-${{ matrix.python }}
+          path: hosting-native.json
       - run: uv run --no-sync python scripts/export_schemas.py --check
       - run: uv run --no-sync python -m build
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -66,7 +73,14 @@ jobs:
       - run: uv sync --frozen --extra server --extra dev
       - run: uv run --no-sync product-pipeline migrate
       - run: uv run --no-sync alembic check
-      - run: uv run --no-sync pytest tests/test_postgres.py -v
+      - run: uv run --no-sync pytest tests/test_postgres.py tests/test_public_beta_postgres.py -v
+      - name: Verify a real PostgreSQL read connection (not Neon suspend proof)
+        run: uv run --no-sync python scripts/hosting_probe.py --postgres > hosting-postgres.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: hosting-postgres
+          path: hosting-postgres.json
   s3:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -76,6 +90,8 @@ jobs:
       AWS_DEFAULT_REGION: us-east-1
       PIPELINE_TEST_S3_ENDPOINT: http://127.0.0.1:9000
       PIPELINE_TEST_S3_BUCKET: pipeline-ci
+      PIPELINE_S3_ENDPOINT: http://127.0.0.1:9000
+      PIPELINE_PROBE_S3_BUCKET: pipeline-ci
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -110,6 +126,13 @@ jobs:
           )
           PY
       - run: uv run --no-sync pytest tests/test_s3.py -v
+      - name: Verify conditional writes, AES256 headers, race and evidence hashes
+        run: uv run --no-sync python scripts/hosting_probe.py --s3-write-probe > hosting-s3.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: hosting-s3
+          path: hosting-s3.json
       - if: failure()
         run: docker logs pipeline-ci-s3
       - if: always()

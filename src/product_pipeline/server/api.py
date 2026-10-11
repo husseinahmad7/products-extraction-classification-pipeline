@@ -5,6 +5,7 @@ from datetime import timedelta
 from typing import Literal
 
 from fastapi import Depends, FastAPI, Header, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import Field
@@ -25,7 +26,7 @@ from product_pipeline.contracts import (
 from product_pipeline.errors import PipelineError
 from product_pipeline.hashing import object_hash
 
-from .auth import authenticate, rotate
+from .auth import rotate
 from .db import (
     Audit,
     Database,
@@ -41,7 +42,9 @@ from .db import (
     idempotent,
     uid,
 )
+from .identity import IdentityMiddleware, ScopedStore, identity, operator, workspace
 from .middleware import BoundaryMiddleware
+from .public_beta import reserve_operation, validate_source
 from .settings import Settings
 from .worker import publish
 
@@ -98,19 +101,41 @@ def representation(row: Resource):
 
 
 def create_app(
-    settings: Settings | None = None, database: Database | None = None, store=None
+    settings: Settings | None = None, database: Database | None = None, store=None, verifier=None
 ) -> FastAPI:
     settings = settings or Settings.from_env()
     db = database or Database(settings.database_url)
-    artifacts = store or settings.store(db)
-    workspace = settings.workspace
+    retained = store or (
+        settings.raw_store() if settings.auth_mode == "neon" else settings.store(db)
+    )
+    artifacts = ScopedStore()
+
     app = FastAPI(
         title="Evidence Pipeline",
         version="0.1.0a1",
-        description="Single-workspace alpha. Offline canonical replay and assisted extraction; see implementation status before deployment.",
+        description="Evidence-first alpha; optional personal-workspace beta identity. Classification remains uncertified.",
     )
-    app.state.database, app.state.store = db, artifacts
-    app.add_middleware(BoundaryMiddleware, artifact_limit=settings.max_upload_bytes)
+    app.state.database, app.state.store = db, retained
+    app.add_middleware(
+        IdentityMiddleware, database=db, settings=settings, raw_store=retained, verifier=verifier
+    )
+    app.add_middleware(
+        BoundaryMiddleware,
+        artifact_limit=min(settings.max_upload_bytes, 1_000_000)
+        if settings.auth_mode == "neon"
+        else settings.max_upload_bytes,
+        auth_url=settings.neon_auth_issuer,
+        connect_origins=settings.cors_origins,
+        public_beta=settings.auth_mode == "neon",
+    )
+    if settings.cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=list(settings.cors_origins),
+            allow_methods=["GET", "POST", "PUT"],
+            allow_headers=["Authorization", "Content-Type", "Idempotency-Key", "If-Match"],
+            expose_headers=["ETag", "Location"],
+        )
 
     @app.exception_handler(PipelineError)
     async def problem_handler(_request, exc: PipelineError):
@@ -122,6 +147,8 @@ def create_app(
             "CONFLICT": 409,
             "PUBLICATION_CONFLICT": 409,
             "QUOTA_EXCEEDED": 507,
+            "FORBIDDEN": 403,
+            "SOURCE_DENIED": 403,
         }.get(exc.code, 422)
         return JSONResponse(
             exc.problem(status),
@@ -140,11 +167,8 @@ def create_app(
             media_type="application/problem+json",
         )
 
-    def actor(authorization: str | None = Header(default=None)):
-        if not authorization or not authorization.startswith("Bearer ") or len(authorization) > 512:
-            raise PipelineError("UNAUTHORIZED", "administrator bearer token required")
-        with db.sessions() as session:
-            return authenticate(session, authorization[7:])
+    def actor():
+        return identity().actor
 
     def mutate(key, action, body, produce):
         if not key or len(key) > 128:
@@ -154,10 +178,10 @@ def create_app(
         payload = {"action": action, "body": body}
         try:
             with db.sessions.begin() as session:
-                return idempotent(session, workspace, key, payload, lambda: produce(session))
+                return idempotent(session, workspace(), key, payload, lambda: produce(session))
         except IntegrityError as exc:
             with db.sessions() as session:
-                existing = session.get(Idempotency, (workspace, key))
+                existing = session.get(Idempotency, (workspace(), key))
                 if existing and existing.request_hash == object_hash(payload):
                     return existing.response
             raise PipelineError(
@@ -169,31 +193,38 @@ def create_app(
             raise PipelineError("STALE_VERSION", "refresh resource and send its ETag in If-Match")
 
     def add_resource(session, kind, value, who):
-        data = value.model_dump(mode="json")
-        session.add(Resource(workspace=workspace, kind=kind, id=value.id, data=data))
         if kind == "source":
-            session.add(DatasetHead(workspace=workspace, source_id=value.id, version=0))
-        audit(session, workspace, who, kind + ".created", value.id)
+            validate_source(session, value, settings)
+        data = value.model_dump(mode="json")
+        session.add(Resource(workspace=workspace(), kind=kind, id=value.id, data=data))
+        if kind == "source":
+            session.add(DatasetHead(workspace=workspace(), source_id=value.id, version=0))
+        audit(session, workspace(), who, kind + ".created", value.id)
         return {"id": value.id, "kind": kind}
 
     def operation(session, kind, payload, who):
+        reserve_operation(session, workspace(), settings)
         job_id = uid()
         current = database_now(session)
         session.add(
             Job(
                 id=job_id,
-                workspace=workspace,
+                workspace=workspace(),
                 kind=kind,
                 payload=payload,
                 available=current,
                 created=current,
             )
         )
-        audit(session, workspace, who, "operation.queued", job_id, {"kind": kind})
+        audit(session, workspace(), who, "operation.queued", job_id, {"kind": kind})
         return {"id": job_id, "state": "queued", "location": f"/v1/operations/{job_id}"}
 
     def accepted(result):
         return JSONResponse(result, status_code=202, headers={"Location": result["location"]})
+
+    from .beta_api import register_beta_routes
+
+    register_beta_routes(app, db, settings, artifacts, actor, mutate, expect_version)
 
     @app.get("/health/live")
     def live():
@@ -201,9 +232,14 @@ def create_app(
 
     @app.get("/health/ready")
     def ready():
+        if settings.auth_mode == "neon":
+            # Public health polling must not wake a suspended database.
+            raise PipelineError(
+                "FORBIDDEN", "use liveness; run database readiness probes out of band"
+            )
         with db.sessions() as session:
             session.execute(text("SELECT 1"))
-        return {"status": "ok", "workspace": workspace}
+        return {"status": "ok"}
 
     @app.get("/v1/capabilities")
     def capabilities(_who=Depends(actor)):
@@ -270,7 +306,7 @@ def create_app(
         def retain():
             key = artifacts.put(bytes(data))
             with db.sessions.begin() as session:
-                audit(session, workspace, who, "artifact.captured", key, {"bytes": len(data)})
+                audit(session, workspace(), who, "artifact.captured", key, {"bytes": len(data)})
             return key
 
         key = await run_in_threadpool(retain)
@@ -281,8 +317,8 @@ def create_app(
         body: CompileRequest, who=Depends(actor), idempotency_key: str | None = Header(default=None)
     ):
         def create(session):
-            get_resource(session, workspace, "source", body.source_id)
-            get_resource(session, workspace, "schema", body.target_id)
+            get_resource(session, workspace(), "source", body.source_id)
+            get_resource(session, workspace(), "schema", body.target_id)
             artifacts.get(body.snapshot_hash)
             return operation(session, "compile", body.model_dump(), who)
 
@@ -294,7 +330,7 @@ def create_app(
     ):
         def create(session):
             source = SourceSpec.model_validate(
-                get_resource(session, workspace, "source", body.spec.source_id).data
+                get_resource(session, workspace(), "source", body.spec.source_id).data
             )
             if source.mode != body.spec.mode:
                 raise PipelineError("MODE_MISMATCH", "recipe mode differs from source")
@@ -302,7 +338,7 @@ def create_app(
             recipe_id = uid()
             session.add(
                 Resource(
-                    workspace=workspace,
+                    workspace=workspace(),
                     kind="recipe",
                     id=recipe_id,
                     data={"spec": body.spec.model_dump(mode="json"), "state": "validating"},
@@ -326,7 +362,7 @@ def create_app(
         idempotency_key: str | None = Header(default=None),
     ):
         def apply(session):
-            row = get_resource(session, workspace, "recipe", recipe_id)
+            row = get_resource(session, workspace(), "recipe", recipe_id)
             expect_version(row, if_match)
             if row.data["state"] != "review_required" or not row.data.get("validation", {}).get(
                 "valid"
@@ -338,15 +374,17 @@ def create_app(
             row.version += 1
             if body.decision == "approve":
                 source_id = row.data["spec"]["source_id"]
-                active = session.get(Resource, (workspace, "active_recipe", source_id))
+                active = session.get(Resource, (workspace(), "active_recipe", source_id))
                 if active:
-                    previous = get_resource(session, workspace, "recipe", active.data["recipe_id"])
+                    previous = get_resource(
+                        session, workspace(), "recipe", active.data["recipe_id"]
+                    )
                     previous.data = {**previous.data, "state": "superseded"}
                     active.data, active.version = {"recipe_id": recipe_id}, active.version + 1
                 else:
                     session.add(
                         Resource(
-                            workspace=workspace,
+                            workspace=workspace(),
                             kind="active_recipe",
                             id=source_id,
                             data={"recipe_id": recipe_id},
@@ -354,7 +392,7 @@ def create_app(
                     )
             audit(
                 session,
-                workspace,
+                workspace(),
                 who,
                 "recipe." + body.decision,
                 recipe_id,
@@ -374,9 +412,9 @@ def create_app(
         body: RunRequest, who=Depends(actor), idempotency_key: str | None = Header(default=None)
     ):
         def create(session):
-            recipe = get_resource(session, workspace, "recipe", body.recipe_id)
+            recipe = get_resource(session, workspace(), "recipe", body.recipe_id)
             source_id = recipe.data["spec"]["source_id"]
-            active = session.get(Resource, (workspace, "active_recipe", source_id))
+            active = session.get(Resource, (workspace(), "active_recipe", source_id))
             if not active or active.data["recipe_id"] != body.recipe_id:
                 raise PipelineError("RECIPE_NOT_ACTIVE", "approve this recipe before running")
             if body.snapshot_hash:
@@ -384,7 +422,7 @@ def create_app(
             run_id = uid()
             session.add(
                 Resource(
-                    workspace=workspace,
+                    workspace=workspace(),
                     kind="run",
                     id=run_id,
                     data={
@@ -420,13 +458,17 @@ def create_app(
         idempotency_key: str | None = Header(default=None),
     ):
         def create(session):
-            recipe = get_resource(session, workspace, "recipe", body.recipe_id)
+            if settings.auth_mode == "neon" and body.interval_seconds < 900:
+                raise PipelineError(
+                    "LIMIT_REACHED", "beta schedules must be at least 15 minutes apart"
+                )
+            recipe = get_resource(session, workspace(), "recipe", body.recipe_id)
             source_id = recipe.data["spec"]["source_id"]
-            active = session.get(Resource, (workspace, "active_recipe", source_id))
+            active = session.get(Resource, (workspace(), "active_recipe", source_id))
             if active is None or active.data.get("recipe_id") != body.recipe_id:
                 raise PipelineError("RECIPE_NOT_ACTIVE", "approve this recipe before scheduling")
             source = SourceSpec.model_validate(
-                get_resource(session, workspace, "source", source_id).data
+                get_resource(session, workspace(), "source", source_id).data
             )
             if source.mode not in {"html", "json"}:
                 raise PipelineError(
@@ -435,7 +477,7 @@ def create_app(
             schedule_id = uid()
             row = Schedule(
                 id=schedule_id,
-                workspace=workspace,
+                workspace=workspace(),
                 source_id=source_id,
                 recipe_id=body.recipe_id,
                 interval_seconds=body.interval_seconds,
@@ -445,7 +487,7 @@ def create_app(
                 created=database_now(session),
             )
             session.add(row)
-            audit(session, workspace, who, "schedule.created", schedule_id)
+            audit(session, workspace(), who, "schedule.created", schedule_id)
             return schedule_view(row)
 
         return mutate(idempotency_key, "schedule.create", body.model_dump(), create)
@@ -459,7 +501,7 @@ def create_app(
         with db.sessions() as session:
             rows = session.scalars(
                 select(Schedule)
-                .where(Schedule.workspace == workspace, Schedule.id > cursor)
+                .where(Schedule.workspace == workspace(), Schedule.id > cursor)
                 .order_by(Schedule.id)
                 .limit(limit + 1)
             ).all()
@@ -472,7 +514,7 @@ def create_app(
     def schedule_get(schedule_id: str, _who=Depends(actor)):
         with db.sessions() as session:
             row = session.get(Schedule, schedule_id)
-            if row is None or row.workspace != workspace:
+            if row is None or row.workspace != workspace():
                 raise PipelineError("NOT_FOUND", "schedule not found")
             return JSONResponse(schedule_view(row), headers={"ETag": f'"{row.version}"'})
 
@@ -487,7 +529,7 @@ def create_app(
         def change(session):
             row = session.scalar(
                 select(Schedule)
-                .where(Schedule.id == schedule_id, Schedule.workspace == workspace)
+                .where(Schedule.id == schedule_id, Schedule.workspace == workspace())
                 .with_for_update()
             )
             if row is None:
@@ -497,13 +539,13 @@ def create_app(
                     "STALE_VERSION", "refresh schedule and send its ETag in If-Match"
                 )
             if action == "resume":
-                active = session.get(Resource, (workspace, "active_recipe", row.source_id))
+                active = session.get(Resource, (workspace(), "active_recipe", row.source_id))
                 if active is None or active.data.get("recipe_id") != row.recipe_id:
                     raise PipelineError("RECIPE_NOT_ACTIVE", "approve this recipe before resuming")
                 row.next_due = database_now(session) + timedelta(seconds=row.interval_seconds)
             row.state = "paused" if action == "pause" else "active"
             row.version += 1
-            audit(session, workspace, who, "schedule." + action, schedule_id)
+            audit(session, workspace(), who, "schedule." + action, schedule_id)
             return schedule_view(row)
 
         return mutate(
@@ -517,7 +559,7 @@ def create_app(
     def operation_get(operation_id: str, _who=Depends(actor)):
         with db.sessions() as session:
             row = session.get(Job, operation_id)
-            if row is None or row.workspace != workspace:
+            if row is None or row.workspace != workspace():
                 raise PipelineError("NOT_FOUND", "operation not found")
             return {
                 "id": row.id,
@@ -538,10 +580,10 @@ def create_app(
         _who=Depends(actor),
     ):
         with db.sessions() as session:
-            query = select(Job).where(Job.workspace == workspace)
+            query = select(Job).where(Job.workspace == workspace())
             if cursor:
                 previous = session.get(Job, cursor)
-                if previous is None or previous.workspace != workspace:
+                if previous is None or previous.workspace != workspace():
                     raise PipelineError("NOT_FOUND", "operation cursor not found")
                 query = query.where(
                     or_(
@@ -578,7 +620,7 @@ def create_app(
         def apply(session):
             row = session.scalar(
                 select(Job)
-                .where(Job.id == operation_id, Job.workspace == workspace)
+                .where(Job.id == operation_id, Job.workspace == workspace())
                 .with_for_update()
             )
             if row is None:
@@ -586,9 +628,9 @@ def create_app(
             if row.state in {"queued", "running", "paused"}:
                 row.state = "cancelled"
                 if row.kind == "run":
-                    run = get_resource(session, workspace, "run", row.payload["run_id"])
+                    run = get_resource(session, workspace(), "run", row.payload["run_id"])
                     run.data, run.version = {**run.data, "state": "cancelled"}, run.version + 1
-                audit(session, workspace, who, "operation.cancelled", operation_id)
+                audit(session, workspace(), who, "operation.cancelled", operation_id)
             return {"id": row.id, "state": row.state}
 
         return mutate(idempotency_key, "cancel:" + operation_id, {}, apply)
@@ -600,21 +642,21 @@ def create_app(
         def apply(session):
             row = session.scalar(
                 select(Job)
-                .where(Job.id == operation_id, Job.workspace == workspace)
+                .where(Job.id == operation_id, Job.workspace == workspace())
                 .with_for_update()
             )
             if row is None:
                 raise PipelineError("NOT_FOUND", "operation not found")
             if row.state != "paused":
                 raise PipelineError("CONFLICT", "only a paused operation can be resumed")
-            quota = session.get(StorageQuota, workspace)
+            quota = session.get(StorageQuota, workspace())
             if quota is None or quota.used_bytes >= quota.limit_bytes:
                 raise PipelineError("QUOTA_EXCEEDED", "expand capacity before resuming")
             row.state, row.error, row.available = "queued", None, database_now(session)
             if row.kind == "run":
-                run = get_resource(session, workspace, "run", row.payload["run_id"])
+                run = get_resource(session, workspace(), "run", row.payload["run_id"])
                 run.data = {**run.data, "state": "queued", "error": None}
-            audit(session, workspace, who, "operation.resumed", operation_id)
+            audit(session, workspace(), who, "operation.resumed", operation_id)
             return {"id": row.id, "state": row.state, "location": f"/v1/operations/{row.id}"}
 
         return accepted(mutate(idempotency_key, "resume:" + operation_id, {}, apply))
@@ -622,7 +664,7 @@ def create_app(
     @app.get("/v1/storage")
     def storage_get(_who=Depends(actor)):
         with db.sessions() as session:
-            quota = session.get(StorageQuota, workspace)
+            quota = session.get(StorageQuota, workspace())
             if quota is None:
                 raise PipelineError("NOT_FOUND", "quota store is not configured")
             return {"limit_bytes": quota.limit_bytes, "used_bytes": quota.used_bytes}
@@ -631,9 +673,15 @@ def create_app(
     def storage_expand(
         body: QuotaExpansion, who=Depends(actor), idempotency_key: str | None = Header(default=None)
     ):
+        operator()
+        if settings.auth_mode == "neon":
+            raise PipelineError(
+                "FORBIDDEN", "free-beta storage budgets cannot be expanded through the API"
+            )
+
         def apply(session):
             quota = session.scalar(
-                select(StorageQuota).where(StorageQuota.workspace == workspace).with_for_update()
+                select(StorageQuota).where(StorageQuota.workspace == workspace()).with_for_update()
             )
             if quota is None:
                 raise PipelineError("NOT_FOUND", "quota store is not configured")
@@ -645,10 +693,10 @@ def create_app(
             quota.limit_bytes = body.limit_bytes
             audit(
                 session,
-                workspace,
+                workspace(),
                 who,
                 "storage.expanded",
-                workspace,
+                workspace(),
                 {
                     "previous_bytes": previous,
                     "limit_bytes": body.limit_bytes,
@@ -664,7 +712,7 @@ def create_app(
         run_id: str, who=Depends(actor), idempotency_key: str | None = Header(default=None)
     ):
         def create(session):
-            get_resource(session, workspace, "run", run_id)
+            get_resource(session, workspace(), "run", run_id)
             return operation(session, "replay", {"run_id": run_id}, who)
 
         return accepted(mutate(idempotency_key, "replay:" + run_id, {}, create))
@@ -677,7 +725,7 @@ def create_app(
         _who=Depends(actor),
     ):
         with db.sessions() as session:
-            row = get_resource(session, workspace, "run", run_id)
+            row = get_resource(session, workspace(), "run", run_id)
             key = row.data.get("result_key")
         if not key:
             return {"items": [], "quarantined": [], "total": 0}
@@ -692,7 +740,7 @@ def create_app(
     @app.get("/v1/revisions/{revision_id}/export")
     def export(revision_id: str, _who=Depends(actor)):
         with db.sessions() as session:
-            row = get_resource(session, workspace, "revision", revision_id)
+            row = get_resource(session, workspace(), "revision", revision_id)
         result = ExtractionResult.model_validate_json(artifacts.get(row.data["result_key"]))
         payload = (
             "\n".join(
@@ -716,17 +764,17 @@ def create_app(
         idempotency_key: str | None = Header(default=None),
     ):
         def apply(session):
-            row = get_resource(session, workspace, "review", review_id)
+            row = get_resource(session, workspace(), "review", review_id)
             expect_version(row, if_match)
             if row.data["state"] != "open":
                 raise PipelineError("CONFLICT", "review is already resolved")
-            run = get_resource(session, workspace, "run", row.data["run_id"])
+            run = get_resource(session, workspace(), "run", row.data["run_id"])
             if run.data["state"] != "awaiting_review":
                 raise PipelineError("CONFLICT", "run is not awaiting this review")
             if body.decision == "approve":
                 publish(
                     session,
-                    workspace,
+                    workspace(),
                     run,
                     run.data["result_key"],
                     run.data["expected_version"],
@@ -750,7 +798,7 @@ def create_app(
             )
             audit(
                 session,
-                workspace,
+                workspace(),
                 who,
                 "review." + body.decision,
                 review_id,
@@ -769,15 +817,17 @@ def create_app(
     def suggest(body: SuggestRequest, _who=Depends(actor)):
         with db.sessions() as session:
             taxonomy = TaxonomySpec.model_validate(
-                get_resource(session, workspace, "taxonomy", body.taxonomy_id).data
+                get_resource(session, workspace(), "taxonomy", body.taxonomy_id).data
             )
         return rank_candidates(body.text, taxonomy)
 
     @app.post("/v1/admin-tokens/rotate")
     def token_rotate(body: Rotation, who=Depends(actor)):
+        if settings.auth_mode != "admin":
+            raise PipelineError("FORBIDDEN", "administrator token rotation is self-hosted only")
         # Never persist plaintext tokens in the idempotency response table.
         with db.sessions.begin() as session:
-            token = rotate(session, workspace, who, body.overlap_seconds)
+            token = rotate(session, workspace(), who, body.overlap_seconds)
         return JSONResponse({"token": token}, headers={"Cache-Control": "no-store"})
 
     @app.get("/v1/audit")
@@ -789,7 +839,7 @@ def create_app(
         with db.sessions() as session:
             rows = session.scalars(
                 select(Audit)
-                .where(Audit.workspace == workspace, Audit.sequence > after)
+                .where(Audit.workspace == workspace(), Audit.sequence > after)
                 .order_by(Audit.sequence)
                 .limit(limit + 1)
             ).all()
@@ -819,6 +869,9 @@ def create_app(
         "reviews": "review",
         "revisions": "revision",
         "replays": "replay",
+        "labels": "label",
+        "models": "model",
+        "datasets": "dataset",
     }
 
     @app.get("/v1/{collection}")
@@ -834,7 +887,7 @@ def create_app(
             rows = session.scalars(
                 select(Resource)
                 .where(
-                    Resource.workspace == workspace,
+                    Resource.workspace == workspace(),
                     Resource.kind == collections[collection],
                     Resource.id > cursor,
                 )
@@ -851,7 +904,7 @@ def create_app(
         if collection not in collections:
             raise PipelineError("NOT_FOUND", "collection not found")
         with db.sessions() as session:
-            row = get_resource(session, workspace, collections[collection], resource_id)
+            row = get_resource(session, workspace(), collections[collection], resource_id)
             return JSONResponse(representation(row), headers={"ETag": f'"{row.version}"'})
 
     if settings.dashboard_dir:

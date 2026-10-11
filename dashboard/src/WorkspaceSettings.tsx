@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { Api } from "./api";
 
 type StorageQuota = { used_bytes: number; limit_bytes: number };
 type TokenRotation = { token: string };
 type Capabilities = { acquisition: { live: string[]; captured_only: string[] }; navigation: string[]; scheduler: boolean; classification: { state: string; automatic_promotion: boolean } };
 
-const bytes = (value: number) => `${new Intl.NumberFormat().format(value)} bytes`;
+const bytes = (value: number) => `${new Intl.NumberFormat("en").format(value)} bytes`;
 const errorText = (error: unknown) => error instanceof Error ? error.message : "Request failed. Try again.";
 
-export function WorkspaceSettings({ api, epoch, onTokenRotated }: { api: Api; epoch: number; onTokenRotated: (token: string) => void }) {
+export function WorkspaceSettings({ api, epoch, onTokenRotated, isOperator = true, managedMode = false, budget }: { api: Api; epoch: number; onTokenRotated: (token: string) => void; isOperator?: boolean; managedMode?: boolean; budget?: ReactNode }) {
   const [quota, setQuota] = useState<StorageQuota | null>(null);
   const [loadError, setLoadError] = useState("");
   const [limit, setLimit] = useState("");
@@ -46,7 +46,7 @@ export function WorkspaceSettings({ api, epoch, onTokenRotated }: { api: Api; ep
 
   async function expand(event: FormEvent) {
     event.preventDefault();
-    if (!validLimit || reason.trim().length < 5) return;
+    if (managedMode || !isOperator || !validLimit || reason.trim().length < 5) return;
     setStorageBusy(true); setStorageError(""); setStorageMessage("");
     try {
       const result = await api.post<StorageQuota>("/v1/storage/expand", { limit_bytes: proposed, reason: reason.trim() });
@@ -57,7 +57,7 @@ export function WorkspaceSettings({ api, epoch, onTokenRotated }: { api: Api; ep
   }
 
   async function rotateToken() {
-    if (!confirmRotation) return;
+    if (managedMode || !isOperator || !confirmRotation) return;
     setTokenBusy(true); setTokenError(""); setNewToken("");
     try {
       const result = await api.post<TokenRotation>("/v1/admin-tokens/rotate", { overlap_seconds: 300 });
@@ -69,7 +69,8 @@ export function WorkspaceSettings({ api, epoch, onTokenRotated }: { api: Api; ep
   }
 
   return <>
-    <header className="page-heading"><div><h1>Workspace settings</h1><p>Manage retained evidence capacity and your administrator session.</p></div></header>
+    <header className="page-heading"><div><h1>Workspace settings</h1><p>{managedMode ? "Inspect retained evidence capacity and public-beta capabilities." : "Manage retained evidence capacity and your administrator session."}</p></div></header>
+    {budget}
     <div className="settings-stack">
       <section className="resource-panel" aria-labelledby="storage-heading">
         <h2 id="storage-heading">Evidence storage</h2>
@@ -79,7 +80,7 @@ export function WorkspaceSettings({ api, epoch, onTokenRotated }: { api: Api; ep
         {quota && <>
           <dl className="settings-facts"><div><dt>Used</dt><dd>{bytes(quota.used_bytes)}</dd></div><div><dt>Capacity</dt><dd>{bytes(quota.limit_bytes)}</dd></div><div><dt>Available</dt><dd>{bytes(Math.max(0, quota.limit_bytes - quota.used_bytes))}</dd></div></dl>
           <progress aria-label="Storage used" value={Math.min(quota.used_bytes, quota.limit_bytes)} max={quota.limit_bytes} />
-          <form onSubmit={expand} className="subform">
+          {!managedMode && isOperator ? <form onSubmit={expand} className="subform">
             <h3>Expand capacity</h3>
             <p>Enter the new total in bytes. Capacity can only increase; expansion never removes saved artifacts.</p>
             <label htmlFor="storage-limit">New total capacity (bytes)</label>
@@ -90,10 +91,10 @@ export function WorkspaceSettings({ api, epoch, onTokenRotated }: { api: Api; ep
             {storageError && <div className="notice error" role="alert">{storageError}</div>}
             {storageMessage && <p className="notice success" role="status">{storageMessage}</p>}
             <button className="primary" disabled={storageBusy || !validLimit || reason.trim().length < 5}>{storageBusy ? "Expanding…" : "Expand capacity"}</button>
-          </form>
+          </form> : <p className="hint">Public accounts cannot expand storage capacity, including operator accounts. Public-beta limits do not authorize paid overages.</p>}
         </>}
       </section>
-      <section className="resource-panel" aria-labelledby="access-heading">
+      {!managedMode && isOperator && <section className="resource-panel" aria-labelledby="access-heading">
         <h2 id="access-heading">Administrator access</h2>
         <p>Rotate this workspace token when an operator changes. The current token remains valid for five minutes so clients can switch over.</p>
         {tokenError && <div className="notice error" role="alert">{tokenError}</div>}
@@ -103,7 +104,7 @@ export function WorkspaceSettings({ api, epoch, onTokenRotated }: { api: Api; ep
           <div className="actions"><button className="primary" disabled={tokenBusy} onClick={() => void rotateToken()}>{tokenBusy ? "Rotating…" : "Confirm token rotation"}</button><button disabled={tokenBusy} onClick={() => setConfirmRotation(false)}>Cancel rotation</button></div>
         </div>}
         {newToken && <div className="token-result" role="status"><p>Copy this new token now. It is shown only on this page, and this dashboard has switched to it.</p><label htmlFor="rotated-token">New administrator token</label><textarea id="rotated-token" className="code-input" readOnly value={newToken} rows={2} onFocus={event => event.currentTarget.select()} /></div>}
-      </section>
+      </section>}
       <section className="resource-panel" aria-labelledby="capabilities-heading">
         <h2 id="capabilities-heading">Capability boundaries</h2>
         {capabilityError && <div className="notice error" role="alert">{capabilityError} Use Refresh to retry.</div>}
@@ -115,7 +116,7 @@ export function WorkspaceSettings({ api, epoch, onTokenRotated }: { api: Api; ep
           <li><strong>Scheduler:</strong> {capabilities.scheduler ? "Available" : "Unavailable; queue runs manually"}.</li>
           <li><strong>Classification:</strong> {capabilities.classification.state.replaceAll("_", " ")}; automatic promotion {capabilities.classification.automatic_promotion ? "enabled" : "disabled"}.</li>
           <li><strong>Publication:</strong> invalid records fail the quality gate. Removed records require a recorded review decision.</li>
-          <li><strong>Workspace:</strong> one self-hosted workspace; the administrator token stays in browser memory for this session.</li>
+          <li><strong>Workspace:</strong> {managedMode ? "your personal workspace is assigned by the server; browser-supplied identities do not grant access to other users' data." : "one self-hosted workspace; the administrator token stays in browser memory for this session."}</li>
         </ul>}
       </section>
     </div>

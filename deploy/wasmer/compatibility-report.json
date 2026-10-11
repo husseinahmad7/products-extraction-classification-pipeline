@@ -1,0 +1,40 @@
+{
+  "checked_on": "2026-10-10",
+  "deployment_ready": false,
+  "lock_sha256": "dc3756cf9df4c9a44c67c76507fe300f8b118c9d828e0f237f68e84fd50d42ba",
+  "scope": "Base plus server dependencies only; no model, browser, PDF or development extras",
+  "account": {
+    "status": "PASS",
+    "method": "Read-only authenticated GraphQL query; no persisted login or mutations",
+    "is_pro": false,
+    "billing_visible": true,
+    "subscription_count": 0,
+    "limit_state": "not_limited"
+  },
+  "dependency_resolution": {
+    "status": "FAIL",
+    "platform": "wasix_wasm32",
+    "python_version": "3.13.19",
+    "implementation": "cp",
+    "abi": "cp313",
+    "only_binary": true,
+    "index_url": "https://pypi.org/simple/",
+    "extra_index_url": "https://python-registry.wasmer.app/simple/",
+    "first_missing_native_pin": "argon2-cffi-bindings==26.1.0",
+    "independently_checked_missing_native_pins": [
+      "pydantic-core==2.46.5",
+      "psycopg-binary==3.3.6",
+      "cryptography==50.0.2",
+      "regex==2026.9.10"
+    ],
+    "note": "Pure-Python Alembic resolves from PyPI. Older WASIX builds exist, but no locked version was downgraded. Cross-platform pip resolution is a build-availability check, not runtime proof."
+  },
+  "wasix_execution": {
+    "status": "NOT_RUN",
+    "reason": "Exact locked dependency resolution failed; a portable CLI download also timed out before a complete archive was available."
+  },
+  "package_publication": "NOT_RUN",
+  "cloud_deployment": "NOT_RUN",
+  "paid_resource_actions": "NONE",
+  "source_or_model_uploads": "NONE"
+}

@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { Activity, ArrowDownToLine, CalendarClock, ChevronRight, Database, FileCheck2, FolderInput, HardDrive, History, ListChecks, LogOut, RefreshCw, ShieldCheck, X } from "lucide-react";
+import { Activity, ArrowDownToLine, CalendarClock, ChevronRight, Database, FileCheck2, FolderInput, Globe, GraduationCap, HardDrive, History, ListChecks, LogOut, RefreshCw, ShieldCheck, X } from "lucide-react";
 import { Api, pretty } from "./api";
-import type { Evidence, Operation, Page, RecordRow, Resource } from "./api";
+import type { Evidence, Operation, Page, RecordRow, Resource, WorkspaceIdentity } from "./api";
 import { WorkspaceSettings } from "./WorkspaceSettings";
 import { OperationsView } from "./OperationsView";
 import { SchedulesView } from "./SchedulesView";
 import { parseDatasetDiff, ReviewSummary, ValidationSummary } from "./ReviewSummary";
+import { createManagedAuthClient, neonAuthUrl } from "./auth";
+import { PublicAuth } from "./PublicAuth";
+import { BudgetView, DomainsView } from "./BetaViews";
+import { LearningView } from "./LearningView";
 
 type Collection = "sources" | "schemas" | "taxonomies" | "drafts" | "recipes" | "runs" | "reviews" | "revisions";
-type Route = Collection | "audit" | "operations" | "schedules" | "settings";
+type Route = Collection | "audit" | "operations" | "schedules" | "settings" | "domains" | "learning";
 const labels: Record<Collection, string> = { sources: "Sources", schemas: "Schemas", taxonomies: "Taxonomies", drafts: "Drafts", recipes: "Recipes", runs: "Runs", reviews: "Review queue", revisions: "Datasets" };
 const descriptions: Record<Collection, string> = {
   sources: "Define where records come from. Each source stays inside its allowed domains.",
@@ -31,12 +35,16 @@ function Badge({ state }: { state: string }) { return <span className={`badge ba
 function ErrorNotice({ children }: { children: ReactNode }) { return <div className="notice error" role="alert">{children}</div>; }
 function Json({ value, title = "Configuration" }: { value: unknown; title?: string }) { return <details className="json-details"><summary>{title}</summary><pre>{pretty(value)}</pre></details>; }
 
-function Connect({ connect }: { connect: (api: Api) => void }) {
+function Connect({ connect }: { connect: (api: Api, identity?: WorkspaceIdentity) => void }) {
   const [token, setToken] = useState(""), [error, setError] = useState(""), [busy, setBusy] = useState(false);
   async function submit(event: FormEvent) {
     event.preventDefault(); setBusy(true); setError("");
     const api = new Api(token.trim());
-    try { await api.get("/v1/sources?limit=1"); setToken(""); connect(api); }
+    try {
+      await api.get("/v1/sources?limit=1");
+      const identity = await api.get<WorkspaceIdentity>("/v1/me");
+      setToken(""); connect(api, identity);
+    }
     catch (error) { setError(errorText(error)); }
     finally { setBusy(false); }
   }
@@ -57,12 +65,17 @@ function Connect({ connect }: { connect: (api: Api) => void }) {
   </main>;
 }
 
-function OperationStatus({ api, operation, refreshed, clear, openStorage }: { api: Api; operation: Operation; refreshed: () => void; clear: () => void; openStorage: () => void }) {
+export function OperationStatus({ api, operation, refreshed, clear, openStorage, beta = false }: { api: Api; operation: Operation; refreshed: () => void; clear: () => void; openStorage: () => void; beta?: boolean }) {
   const [current, setCurrent] = useState(operation), [error, setError] = useState(""), [busy, setBusy] = useState(false);
+  const [pollingStopped, setPollingStopped] = useState(false);
   useEffect(() => {
     if (!isOpen(current.state)) return;
+    setPollingStopped(false);
     let alive = true;
+    const started = Date.now();
     const poll = async () => {
+      if (beta && Date.now() - started >= 120000) { clearInterval(timer); if (alive) setPollingStopped(true); return; }
+      if (beta && document.visibilityState === "hidden") return;
       try {
         const next = await api.get<Operation>(`/v1/operations/${operation.id}`);
         if (!alive) return;
@@ -70,9 +83,15 @@ function OperationStatus({ api, operation, refreshed, clear, openStorage }: { ap
         if (!isOpen(next.state)) { clearInterval(timer); refreshed(); }
       } catch (error) { if (alive) setError(errorText(error)); }
     };
-    const timer = setInterval(() => void poll(), 1800); void poll();
+    const timer = setInterval(() => void poll(), beta ? 15000 : 1800); void poll();
     return () => { alive = false; clearInterval(timer); };
-  }, [api, operation.id, refreshed, current.state]);
+  }, [api, operation.id, refreshed, current.state, beta]);
+  async function checkStatus() {
+    setBusy(true); setError("");
+    try { setCurrent(await api.get<Operation>(`/v1/operations/${operation.id}`)); refreshed(); }
+    catch (error) { setError(errorText(error)); }
+    finally { setBusy(false); }
+  }
   async function change(action: "cancel" | "resume") {
     setBusy(true); setError("");
     try {
@@ -85,7 +104,8 @@ function OperationStatus({ api, operation, refreshed, clear, openStorage }: { ap
   return <section className="operation" aria-label="Latest operation" aria-live="polite">
     <div><Badge state={current.state} /> <span>Operation <code>{current.id}</code></span>{current.result && <span> → {current.result.kind} <code>{current.result.id}</code></span>}</div>
     {current.error && <p>{current.error.detail}</p>}{error && <ErrorNotice>{error}</ErrorNotice>}
-    <div className="actions">{current.state === "paused" && <><button onClick={openStorage}>Storage settings</button><button className="primary" disabled={busy} onClick={() => void change("resume")}>{busy ? "Resuming…" : "Resume operation"}</button></>}
+    {beta && pollingStopped && isOpen(current.state) && <p className="hint">Automatic checks paused so the database can sleep. Check status when you need an update.</p>}
+    <div className="actions">{beta && isOpen(current.state) && <button disabled={busy} onClick={() => void checkStatus()}>Check operation status</button>}{current.state === "paused" && <><button onClick={openStorage}>Storage settings</button><button className="primary" disabled={busy} onClick={() => void change("resume")}>{busy ? "Resuming…" : "Resume operation"}</button></>}
       {(isOpen(current.state) || current.state === "paused") && <button disabled={busy} onClick={() => void change("cancel")}>Cancel operation</button>}
       {!isOpen(current.state) && current.state !== "paused" && <button onClick={clear} aria-label="Dismiss operation"><X size={16} /></button>}</div>
   </section>;
@@ -94,19 +114,32 @@ function OperationStatus({ api, operation, refreshed, clear, openStorage }: { ap
 const schemaTemplate = { id: "catalog-v1", definition: { type: "object", properties: { sku: { type: "string" }, name: { type: "string" }, description: { type: "string" } }, required: ["sku", "name"], additionalProperties: false } };
 const taxonomyTemplate = { id: "categories-v1", nodes: [{ id: "product", label: "Products" }, { id: "tools", label: "Tools", parent_id: "product", aliases: ["drill", "saw"] }] };
 
-function Creator({ collection, api, saved, close }: { collection: Collection; api: Api; saved: () => void; close: () => void }) {
+function Creator({ collection, api, saved, close, beta = false }: { collection: Collection; api: Api; saved: () => void; close: () => void; beta?: boolean }) {
   const [name, setName] = useState(""), [id, setId] = useState(""), [url, setUrl] = useState(""), [mode, setMode] = useState("html");
   const [navigationKind, setNavigationKind] = useState(""), [navigationValue, setNavigationValue] = useState(""), [navigationAttribute, setNavigationAttribute] = useState("href");
   const [authRef, setAuthRef] = useState(""), [minInterval, setMinInterval] = useState("1");
   const [document, setDocument] = useState(pretty(collection === "schemas" ? schemaTemplate : taxonomyTemplate));
   const [error, setError] = useState(""), [busy, setBusy] = useState(false);
+  const [approved, setApproved] = useState<string[] | null>(null);
+  useEffect(() => {
+    if (!beta || collection !== "sources") return;
+    let alive = true;
+    void api.get<Page<{ domain: string }>>("/v1/approved-domains").then(page => { if (alive) setApproved(page.items.map(item => item.domain)); }).catch(error => { if (alive) setError(errorText(error)); });
+    return () => { alive = false; };
+  }, [api, beta, collection]);
   async function submit(event: FormEvent) {
     event.preventDefault(); setBusy(true); setError("");
     try {
+      if (collection === "sources" && beta) {
+        const parsed = new URL(url);
+        if (parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.port && parsed.port !== "443") throw new Error("Public sources require HTTPS without embedded credentials or nonstandard ports.");
+        if (!approved?.includes(parsed.hostname)) throw new Error("This exact hostname is not approved. Request it under Approved sources before creating a live source.");
+      }
       const body = collection === "sources" ? {
         id, name, url, mode, allowed_domains: [new URL(url).hostname],
         min_interval_seconds: Number(minInterval),
-        ...(authRef.trim() ? { auth_ref: authRef.trim() } : {}),
+        ...(beta ? { limits: { max_pages: 10, max_records: 1000, max_bytes: 1000000, deadline_seconds: 60, request_timeout_seconds: 20 } } : {}),
+        ...(!beta && authRef.trim() ? { auth_ref: authRef.trim() } : {}),
         ...(navigationKind ? { navigation: { kind: navigationKind, value: navigationValue.trim(), ...(navigationKind.startsWith("html") ? { attribute: navigationAttribute.trim() || "href" } : {}) } } : {}),
       } : JSON.parse(document);
       await api.post(`/v1/${collection}`, body); saved(); close();
@@ -118,17 +151,18 @@ function Creator({ collection, api, saved, close }: { collection: Collection; ap
       <label htmlFor="source-name">Display name</label><input id="source-name" value={name} onChange={e => setName(e.target.value)} required maxLength={200} />
       <label htmlFor="source-id">Stable source ID</label><input id="source-id" value={id} onChange={e => setId(e.target.value)} pattern={"[a-zA-Z0-9_\\-]+"} required maxLength={128} /><p className="hint">Use letters, numbers, hyphens or underscores. This becomes part of record identity.</p>
       <label htmlFor="source-url">Source URL</label><input id="source-url" type="url" value={url} onChange={e => setUrl(e.target.value)} required placeholder="https://example.org/catalog" />
-      <label htmlFor="source-mode">Source type</label><select id="source-mode" value={mode} onChange={e => { setMode(e.target.value); setNavigationKind(""); }}><option value="html">Static HTML</option><option value="json">JSON API</option><option value="browser">Rendered HTML — captured artifacts only</option><option value="pdf">PDF blocks — captured artifacts only</option></select>
-      <p className="hint">The URL's exact hostname is allowlisted. Rendered HTML and PDF currently require a retained canonical capture.</p>
+      <label htmlFor="source-mode">Source type</label><select id="source-mode" value={mode} onChange={e => { setMode(e.target.value); setNavigationKind(""); }}><option value="html">Static HTML</option><option value="json">JSON API</option>{!beta && <><option value="browser">Rendered HTML — captured artifacts only</option><option value="pdf">PDF blocks — captured artifacts only</option></>}</select>
+      <p className="hint">{beta ? "Public beta: 10 pages, 1,000 records, 1 MB per page, and a 60-second acquisition deadline. No source credentials are accepted." : "The URL's exact hostname is allowlisted. Rendered HTML and PDF currently require a retained canonical capture."}</p>
+      {beta && <p className="hint">Approved exact hostnames: {approved === null ? "Loading…" : approved.join(", ") || "None yet — request one under Approved sources."}</p>}
       {(mode === "html" || mode === "json") && <>
         <label htmlFor="source-navigation">Page navigation (optional)</label><select id="source-navigation" value={navigationKind} onChange={e => setNavigationKind(e.target.value)}><option value="">Single page</option>{mode === "html" ? <><option value="html_next">Follow next link</option><option value="html_links">Follow page links</option></> : <><option value="json_next">Follow next pointer</option><option value="json_links">Follow link pointers</option></>}</select>
         {navigationKind && <><label htmlFor="navigation-value">{mode === "html" ? "Link CSS selector" : "Link JSON Pointer"}</label><input id="navigation-value" value={navigationValue} onChange={e => setNavigationValue(e.target.value)} required placeholder={mode === "html" ? "a.next" : "/next"} />{mode === "html" && <><label htmlFor="navigation-attribute">Link attribute</label><input id="navigation-attribute" value={navigationAttribute} onChange={e => setNavigationAttribute(e.target.value)} required /></>}</>}
       </>}
-      <label htmlFor="source-interval">Minimum interval between requests (seconds)</label><input id="source-interval" type="number" min="0.1" max="3600" step="0.1" value={minInterval} onChange={e => setMinInterval(e.target.value)} required />
-      <label htmlFor="source-auth-ref">Credential reference (optional)</label><input id="source-auth-ref" value={authRef} onChange={e => setAuthRef(e.target.value)} pattern="env:[A-Z][A-Z0-9_]*" maxLength={132} placeholder="env:CATALOG_TOKEN" autoComplete="off" spellCheck={false} /><p className="hint">Name a server environment variable. Never paste a token or secret here; authenticated sources require HTTPS.</p>
+      <label htmlFor="source-interval">Minimum interval between requests (seconds)</label><input id="source-interval" type="number" min={beta ? "1" : "0.1"} max="3600" step="0.1" value={minInterval} onChange={e => setMinInterval(e.target.value)} required />
+      {!beta && <><label htmlFor="source-auth-ref">Credential reference (optional)</label><input id="source-auth-ref" value={authRef} onChange={e => setAuthRef(e.target.value)} pattern="env:[A-Z][A-Z0-9_]*" maxLength={132} placeholder="env:CATALOG_TOKEN" autoComplete="off" spellCheck={false} /><p className="hint">Name a server environment variable. Never paste a token or secret here; authenticated sources require HTTPS.</p></>}
     </> : <><label htmlFor="new-document">{collection === "schemas" ? "Target schema (JSON)" : "Taxonomy (JSON)"}</label><textarea id="new-document" className="code-input" rows={17} value={document} onChange={e => setDocument(e.target.value)} required spellCheck={false} /></>}
     {error && <ErrorNotice>{error}</ErrorNotice>}
-    <button className="primary" disabled={busy}>{busy ? "Saving…" : "Save configuration"}</button>
+    <button className="primary" disabled={busy || beta && collection === "sources" && !approved?.length}>{busy ? "Saving…" : "Save configuration"}</button>
   </form>;
 }
 
@@ -204,7 +238,7 @@ function ResourcePanel({ row, api, refresh, queued }: { row: Resource; api: Api;
   </section>;
 }
 
-export function ResourceView({ collection, api, epoch, refresh, queued }: { collection: Collection; api: Api; epoch: number; refresh: () => void; queued: (op: Operation) => void }) {
+export function ResourceView({ collection, api, epoch, refresh, queued, beta = false }: { collection: Collection; api: Api; epoch: number; refresh: () => void; queued: (op: Operation) => void; beta?: boolean }) {
   const [page, setPage] = useState<Page<Resource> | null>(null), [cursor, setCursor] = useState(""), [cursors, setCursors] = useState<string[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null), [creating, setCreating] = useState(false), [error, setError] = useState("");
   const [loadedCursor, setLoadedCursor] = useState<string | null>(null);
@@ -216,7 +250,7 @@ export function ResourceView({ collection, api, epoch, refresh, queued }: { coll
   const canCreate = ["sources", "schemas", "taxonomies"].includes(collection);
   return <><header className="page-heading"><div><h1>{labels[collection]}</h1><p>{descriptions[collection]}</p></div>{canCreate && <button className="primary" onClick={() => setCreating(!creating)}>Add {collection === "sources" ? "source" : collection === "schemas" ? "schema" : "taxonomy"}</button>}</header>
     {error && <ErrorNotice>{error} <button onClick={refresh}>Retry</button></ErrorNotice>}
-    {creating && <Creator key={collection} collection={collection} api={api} saved={refresh} close={() => setCreating(false)} />}
+    {creating && <Creator key={collection} collection={collection} api={api} saved={refresh} close={() => setCreating(false)} beta={beta} />}
     {!page && !error && <p role="status">Loading {labels[collection].toLowerCase()}…</p>}
     {page && <div className={selected ? "workspace split" : "workspace"}><section className="list-panel" aria-label={labels[collection]}>
       {page.items.length ? <div className="table-scroll"><table><thead><tr><th scope="col">Item</th><th scope="col">State</th><th scope="col">Created</th></tr></thead><tbody>{page.items.map(row => <tr key={row.id} className={selectedId === row.id ? "selected" : ""}><td><button className="row-button" onClick={() => setSelectedId(row.id)} aria-pressed={selectedId === row.id}>{displayName(row)}<small>{row.id}</small></button></td><td><Badge state={stateOf(row)} /></td><td><time dateTime={row.created}>{new Date(row.created + (row.created.endsWith("Z") ? "" : "Z")).toLocaleString()}</time></td></tr>)}</tbody></table></div> : <div className="empty"><FolderInput size={30} aria-hidden="true" /><h2>No {labels[collection].toLowerCase()} yet</h2><p>{collection === "sources" ? "Add a source, define a schema, then compile a captured sample." : collection === "reviews" ? "No publication decisions are waiting on this page." : "Items will appear here as you work through the evidence lifecycle."}</p></div>}
@@ -234,17 +268,40 @@ function AuditView({ api, epoch }: { api: Api; epoch: number }) {
 
 export default function App() {
   const [api, setApi] = useState<Api | null>(null), [route, setRoute] = useState<Route>("sources"), [epoch, setEpoch] = useState(0), [operation, setOperation] = useState<Operation | null>(null);
+  const [identity, setIdentity] = useState<WorkspaceIdentity | null>(null), [signOutError, setSignOutError] = useState(""), [signOutBusy, setSignOutBusy] = useState(false);
+  const [{ authClient, configurationError }] = useState(() => {
+    try { return { authClient: neonAuthUrl ? createManagedAuthClient(neonAuthUrl) : null, configurationError: "" }; }
+    catch (error) { return { authClient: null, configurationError: errorText(error) }; }
+  });
   // Stable callback keeps operation polling independent of unrelated renders.
   const [refresh] = useState(() => () => setEpoch(value => value + 1));
-  if (!api) return <Connect connect={setApi} />;
+  const [connect] = useState(() => (nextApi: Api, nextIdentity?: WorkspaceIdentity) => {
+    setApi(nextApi); setIdentity(nextIdentity || null); setSignOutError(""); setRoute("sources");
+  });
+  async function disconnect() {
+    setSignOutBusy(true); setSignOutError("");
+    try {
+      if (authClient) {
+        const result = await authClient.signOut();
+        if (result.error) throw new Error(result.error.message || "Sign out failed. Please retry.");
+      }
+      setApi(null); setIdentity(null); setOperation(null);
+    } catch (error) { setSignOutError(errorText(error)); }
+    finally { setSignOutBusy(false); }
+  }
+  if (configurationError) return <main className="connect"><h1>Authentication configuration required</h1><ErrorNotice>{configurationError}</ErrorNotice><p>Check VITE_NEON_AUTH_URL. The public dashboard does not fall back to an administrator token.</p></main>;
+  if (!api) return authClient ? <PublicAuth client={authClient} connect={connect} /> : <Connect connect={connect} />;
+  const beta = !!authClient, isOperator = beta ? identity?.is_operator === true : true;
   const setup = ["sources", "schemas", "taxonomies", "drafts", "recipes"].includes(route);
+  const routeLabel = route === "audit" ? "Audit trail" : route === "operations" ? "Operations" : route === "schedules" ? "Schedules" : route === "settings" ? "Settings" : route === "domains" ? "Approved sources" : route === "learning" ? "Learning & models" : labels[route];
   return <div className="app-shell"><a className="skip-link" href="#main">Skip to workspace</a><aside className="sidebar"><div className="brand"><FileCheck2 size={24} aria-hidden="true" /><span>Evidence<br />Pipeline</span></div><nav aria-label="Evidence lifecycle">
-    {([{ key: "sources", label: "Setup", icon: FolderInput }, { key: "operations", label: "Operations", icon: ListChecks }, { key: "runs", label: "Runs & evidence", icon: Activity }, { key: "schedules", label: "Schedules", icon: CalendarClock }, { key: "reviews", label: "Review queue", icon: ShieldCheck }, { key: "revisions", label: "Datasets", icon: Database }, { key: "audit", label: "Audit trail", icon: History }, { key: "settings", label: "Settings", icon: HardDrive }] as const).map(item => <button key={item.key} onClick={() => setRoute(item.key)} aria-current={route === item.key || item.key === "sources" && setup ? "page" : undefined}><item.icon size={18} aria-hidden="true" />{item.label}</button>)}
-  </nav><div className="sidebar-foot"><span>Development alpha</span><p>Single-workspace control plane</p><button onClick={() => { setApi(null); setOperation(null); }}><LogOut size={16} aria-hidden="true" />Disconnect</button></div></aside>
-  <div className="main-shell"><div className="topbar"><span>Workspace / {route === "audit" ? "Audit trail" : route === "operations" ? "Operations" : route === "schedules" ? "Schedules" : route === "settings" ? "Settings" : labels[route]}</span><button onClick={refresh}><RefreshCw size={15} aria-hidden="true" />Refresh</button></div>
+    {([{ key: "sources", label: "Setup", icon: FolderInput }, { key: "domains", label: "Approved sources", icon: Globe }, { key: "operations", label: "Operations", icon: ListChecks }, { key: "runs", label: "Runs & evidence", icon: Activity }, { key: "schedules", label: "Schedules", icon: CalendarClock }, { key: "reviews", label: "Review queue", icon: ShieldCheck }, { key: "revisions", label: "Datasets", icon: Database }, { key: "learning", label: "Learning & models", icon: GraduationCap }, { key: "audit", label: "Audit trail", icon: History }, { key: "settings", label: "Settings", icon: HardDrive }] as const).filter(item => beta || item.key !== "domains").map(item => <button key={item.key} onClick={() => setRoute(item.key)} aria-current={route === item.key || item.key === "sources" && setup ? "page" : undefined}><item.icon size={18} aria-hidden="true" />{item.label}</button>)}
+  </nav><div className="sidebar-foot"><span>{beta ? "Public beta configuration" : "Development alpha"}</span><p>{beta ? isOperator ? "Platform operator" : "Personal workspace" : "Self-hosted control plane"}</p><button disabled={signOutBusy} onClick={() => void disconnect()}><LogOut size={16} aria-hidden="true" />{signOutBusy ? "Signing out…" : beta ? "Sign out" : "Disconnect"}</button></div></aside>
+  <div className="main-shell"><div className="topbar"><span>{identity?.workspace || "Workspace"} / {routeLabel}</span><button onClick={refresh}><RefreshCw size={15} aria-hidden="true" />Refresh</button></div>
   <main id="main" tabIndex={-1}><div className="capability-note">Live: HTML & JSON · Captured replay: all four modes · Classification: abstains until certified</div>
-    {operation && <OperationStatus key={operation.id} api={api} operation={operation} refreshed={refresh} clear={() => setOperation(null)} openStorage={() => setRoute("settings")} />}
+    {signOutError && <ErrorNotice>{signOutError}</ErrorNotice>}
+    {operation && <OperationStatus key={operation.id} api={api} operation={operation} refreshed={refresh} clear={() => setOperation(null)} openStorage={() => setRoute("settings")} beta={beta} />}
     {setup && <nav className="tabs" aria-label="Setup sections">{(["sources", "schemas", "taxonomies", "drafts", "recipes"] as Collection[]).map(key => <button key={key} aria-current={route === key ? "page" : undefined} onClick={() => setRoute(key)}>{labels[key]}</button>)}</nav>}
-    {route === "audit" ? <AuditView api={api} epoch={epoch} /> : route === "operations" ? <OperationsView api={api} epoch={epoch} openStorage={() => setRoute("settings")} /> : route === "schedules" ? <SchedulesView api={api} epoch={epoch} /> : route === "settings" ? <WorkspaceSettings api={api} epoch={epoch} onTokenRotated={token => setApi(new Api(token))} /> : <ResourceView key={route} collection={route} api={api} epoch={epoch} refresh={refresh} queued={op => { setOperation(op); refresh(); }} />}
+    {route === "audit" ? <AuditView api={api} epoch={epoch} /> : route === "domains" ? <DomainsView api={api} epoch={epoch} isOperator={isOperator} /> : route === "learning" ? <LearningView api={api} epoch={epoch} /> : route === "operations" ? <OperationsView api={api} epoch={epoch} openStorage={() => setRoute("settings")} /> : route === "schedules" ? <SchedulesView api={api} epoch={epoch} /> : route === "settings" ? <WorkspaceSettings api={api} epoch={epoch} isOperator={isOperator} managedMode={beta} budget={beta ? <BudgetView api={api} epoch={epoch} /> : undefined} onTokenRotated={token => setApi(new Api(token))} /> : <ResourceView key={route} collection={route} api={api} epoch={epoch} refresh={refresh} beta={beta} queued={op => { setOperation(op); refresh(); }} />}
   </main><footer>Evidence is retained. Unverified model scores are not published as classifications.</footer></div></div>;
 }

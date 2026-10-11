@@ -1,6 +1,8 @@
 import argparse
 import json
+import math
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
 import yaml
@@ -42,10 +44,19 @@ def main(argv=None):
     serve = commands.add_parser("serve")
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8000)
-    worker = commands.add_parser("worker")
-    worker.add_argument("--once", action="store_true")
+    worker = commands.add_parser("worker", help="drain a bounded batch and exit when idle")
+    mode = worker.add_mutually_exclusive_group()
+    mode.add_argument("--once", action="store_true", help="claim at most one job")
+    mode.add_argument("--batch", action="store_true", help="bounded batch (default)")
+    mode.add_argument("--forever", action="store_true", help="legacy self-hosted polling mode")
+    worker.add_argument("--max-jobs", type=int, default=3)
+    worker.add_argument("--max-seconds", type=float, default=120)
     args = parser.parse_args(argv)
     try:
+        if args.command == "worker" and (
+            args.max_jobs < 1 or args.max_seconds <= 0 or not math.isfinite(args.max_seconds)
+        ):
+            raise ValueError("batch job and time budgets must be positive")
         if args.command == "schema":
             models: dict[str, type[Contract]] = {
                 "recipe": Recipe,
@@ -118,8 +129,43 @@ def main(argv=None):
             elif args.command == "worker":
                 from .server.worker import Worker
 
-                instance = Worker(database, settings.store(database))
-                instance.once() if args.once else instance.run_forever()
+                public = getattr(settings, "auth_mode", "admin") == "neon"
+                if public and args.forever:
+                    raise PipelineError(
+                        "WORKER_MODE_DENIED",
+                        "public beta requires bounded workers, not idle polling",
+                    )
+                if public:
+                    from .server.public_beta import admit_schedule, guard_claim
+
+                    instance = Worker(
+                        database,
+                        store_factory=lambda workspace: settings.store(
+                            database, workspace=workspace
+                        ),
+                        claim_guard=lambda claim: guard_claim(database, claim, settings),
+                        schedule_admission=lambda session, schedule: admit_schedule(
+                            session, schedule, settings
+                        ),
+                    )
+                else:
+                    instance = Worker(database, settings.store(database))
+                try:
+                    if args.forever:
+                        instance.run_forever()
+                    else:
+                        print(
+                            json.dumps(
+                                asdict(
+                                    instance.run_batch(
+                                        1 if args.once else args.max_jobs, args.max_seconds
+                                    )
+                                )
+                            )
+                        )
+                finally:
+                    # Idle workers must not leave live DB connections behind.
+                    database.engine.dispose()
         return 0
     except (PipelineError, ValueError, OSError) as exc:
         print(

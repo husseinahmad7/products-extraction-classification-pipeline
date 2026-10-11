@@ -105,6 +105,23 @@ dd { margin: 0; overflow-wrap: anywhere; line-height: 1.5; }
 .evidence-detail { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 1.5rem; }
 .evidence-detail h4:first-child { margin-top: 0; }
 .settings-stack { display: grid; gap: 1.5rem; max-width: 70rem; }
+.learning-stack { display: grid; gap: 1.5rem; max-width: 70rem; margin-top: 1.5rem; }
+.auth-secondary { display: flex; margin-top: .75rem; font-size: .85rem; }
+.domain-request, .learning-item { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.domain-request h3, .learning-item h3 { margin-top: 0; }
+.domain-decision { max-width: 46rem; }
+.domain-decision .actions { margin-top: .75rem; }
+.approved-domain-list { margin: 1rem 0; padding-left: 1.4rem; line-height: 1.8; }
+.budget-group h3 { text-transform: capitalize; }
+.beta-budget { margin-bottom: 1.5rem; max-width: 70rem; }
+.budget-group .settings-facts { gap: 1rem 2rem; }
+.budget-group dd pre { max-width: 28rem; margin: 0; }
+.budget-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1.2rem; }
+.budget-metrics > div { padding: .65rem 0; }
+.budget-metrics dt { text-transform: capitalize; margin-bottom: .3rem; }
+.budget-metrics progress { display: block; margin-top: .6rem; height: .65rem; width: 100%; accent-color: var(--accent); }
+.reviewed-record { margin-top: 1.5rem; border-top: 1px solid var(--line); padding-top: .5rem; }
+.reviewed-record pre { max-height: 18rem; }
 .settings-stack .resource-panel > h2 { margin-bottom: .7rem; }
 .settings-stack .resource-panel > p { color: var(--muted); }
 .settings-facts, .diff-counts { display: flex; flex-wrap: wrap; gap: .75rem 2rem; margin: 1.2rem 0; }

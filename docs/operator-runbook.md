@@ -7,7 +7,7 @@ This is a development/self-hosted evaluation runbook, not a production authoriza
 1. Install Python 3.13, Node 24 and uv. From the repository root run `uv sync --frozen --extra server --extra dev --python 3.13`.
 2. Run `uv run --no-sync product-pipeline migrate`. This creates/upgrades the configured database; SQLite `pipeline.db` is the default development database.
 3. In an interactive local terminal run `uv run --no-sync product-pipeline admin-bootstrap`. Store the displayed token securely. It is not retrievable later.
-4. Start `uv run --no-sync product-pipeline serve` and `uv run --no-sync product-pipeline worker` in separate terminals.
+4. Start `uv run --no-sync product-pipeline serve`. For continuous self-hosted dispatch, start `uv run --no-sync product-pipeline worker --forever` in another terminal. The default `worker` command now drains a bounded batch and exits when idle; use `worker --batch --max-jobs 3 --max-seconds 120` for on-demand or scheduled dispatch. The pending $0 beta hosting template dispatches every 30 minutes to allow database suspension; public mode rejects `--forever`.
 5. In `dashboard/`, run `npm ci --ignore-scripts` then `npm run dev`. Vite proxies the API to port 8000. Paste the token into the connect screen. A reload/disconnect clears the browser token.
 
 For a built same-origin dashboard, run `npm run build` in `dashboard/`, set `PIPELINE_DASHBOARD_DIR` to its absolute `dist` directory, and restart the API. No external font/CDN is needed.
@@ -67,3 +67,7 @@ A disposable PostgreSQL 17 database-only backup/restore was verified on Kaggle; 
 `/health/live` checks the process; `/health/ready` checks database connectivity only, not the artifact backend or full capability readiness. Audit event sequence supplies state-change order. Worker logs include operation IDs and must be secured like the source data they may describe. Do not log administrator tokens or signed object URLs.
 
 Use `python scripts/release_gate.py --expect-blocked` during alpha verification. Removing a gate to get a green badge is not a remediation.
+
+## Optional public beta hosting
+
+Public identity mode is separate from the local administrator-token mode. Use Neon Auth, personal workspaces, approved public HTTPS domains, conservative tenant/global budgets and bounded workers. Never expose the legacy administrator token to public users. See [free beta hosting](free-beta-hosting.md) for Wasmer/Neon compatibility probes, the pending schedule template and the actual deployment acceptance boundary. Native CI success does not prove WASIX compatibility or that a provider's object store satisfies the evidence contract.

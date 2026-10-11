@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
@@ -153,6 +154,47 @@ class Schedule(Base):
     created: Mapped[datetime] = mapped_column(DateTime, default=now)
 
 
+class UserWorkspace(Base):
+    __tablename__ = "user_workspaces"
+    workspace: Mapped[str] = mapped_column(String(128), primary_key=True)
+    issuer: Mapped[str] = mapped_column(String(512))
+    subject: Mapped[str] = mapped_column(String(512))
+    created: Mapped[datetime] = mapped_column(DateTime, default=now)
+    __table_args__ = (UniqueConstraint("issuer", "subject"),)
+
+
+class ApprovedDomain(Base):
+    __tablename__ = "approved_domains"
+    domain: Mapped[str] = mapped_column(String(253), primary_key=True)
+    enabled: Mapped[bool] = mapped_column(default=True)
+    actor: Mapped[str] = mapped_column(String(128))
+    reason: Mapped[str] = mapped_column(String(2000))
+    created: Mapped[datetime] = mapped_column(DateTime, default=now)
+
+
+class DomainRequest(Base):
+    __tablename__ = "domain_requests"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    workspace: Mapped[str] = mapped_column(String(128), index=True)
+    domain: Mapped[str] = mapped_column(String(253))
+    reason: Mapped[str] = mapped_column(String(2000))
+    state: Mapped[str] = mapped_column(String(20), default="pending")
+    decision_reason: Mapped[str | None] = mapped_column(String(2000))
+    decided_by: Mapped[str | None] = mapped_column(String(128))
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created: Mapped[datetime] = mapped_column(DateTime, default=now)
+    __mapper_args__ = {"version_id_col": version}
+
+
+class BudgetUsage(Base):
+    __tablename__ = "budget_usage"
+    scope: Mapped[str] = mapped_column(String(128), primary_key=True)
+    period: Mapped[str] = mapped_column(String(7), primary_key=True)
+    counters: Mapped[dict] = mapped_column(JSON, default=dict)
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    __mapper_args__ = {"version_id_col": version}
+
+
 class Database:
     def __init__(self, url: str):
         self.engine = create_engine(
@@ -258,10 +300,26 @@ class Database:
             row.next_allowed = planned + timedelta(seconds=interval_seconds)
             return wait
 
-    def dispatch_due_schedules(self, limit: int = 10, workspace: str | None = None) -> int:
-        """Atomically coalesce due intervals into one durable run per schedule."""
+    def dispatch_due_schedules(
+        self,
+        limit: int = 10,
+        workspace: str | None = None,
+        admission: Callable | None = None,
+    ) -> int:
+        """Coalesce due intervals only after transactional schedule admission.
+
+        A trusted admission callback receives this session and the schedule,
+        and returns reservation flags for the new job. Its writes, the schedule
+        advance and run/job creation share a savepoint: denied work cannot leave
+        partial budget charges or another queued operation behind.
+        """
         dispatched = 0
         with self.sessions.begin() as session:
+            if self.engine.dialect.name == "sqlite":
+                # sqlite3's legacy transaction mode does not BEGIN for SELECT
+                # or SAVEPOINT. Establish a real outer transaction so released
+                # savepoints cannot escape a later batch rollback.
+                session.connection().exec_driver_sql("BEGIN IMMEDIATE")
             current = database_now(session)
             rows = session.scalars(
                 select(Schedule)
@@ -274,82 +332,100 @@ class Database:
                 .with_for_update(skip_locked=True)
                 .limit(limit)
             ).all()
-            for schedule in rows:
-                active = session.get(
-                    Resource, (schedule.workspace, "active_recipe", schedule.source_id)
-                )
-                if active is None or active.data.get("recipe_id") != schedule.recipe_id:
-                    updated_id = session.scalar(
-                        update(Schedule)
-                        .where(
-                            Schedule.id == schedule.id,
-                            Schedule.state == "active",
-                            Schedule.next_due == schedule.next_due,
-                        )
-                        .values(state="paused", version=Schedule.version + 1)
-                        .returning(Schedule.id)
-                    )
-                    if updated_id is not None:
-                        audit(
-                            session,
-                            schedule.workspace,
-                            "scheduler",
-                            "schedule.paused",
-                            schedule.id,
-                            {"reason": "RECIPE_NOT_ACTIVE"},
-                        )
-                    continue
-                run_id = uid()
+
+            def pause_schedule(schedule, expected_due, reason):
                 updated_id = session.scalar(
                     update(Schedule)
                     .where(
                         Schedule.id == schedule.id,
                         Schedule.state == "active",
-                        Schedule.next_due == schedule.next_due,
+                        Schedule.next_due == expected_due,
                     )
-                    .values(
-                        next_due=current + timedelta(seconds=schedule.interval_seconds),
-                        last_run_id=run_id,
-                        version=Schedule.version + 1,
-                    )
+                    .values(state="paused", version=Schedule.version + 1)
                     .returning(Schedule.id)
                 )
-                if updated_id is None:
+                if updated_id is not None:
+                    audit(
+                        session,
+                        schedule.workspace,
+                        "scheduler",
+                        "schedule.paused",
+                        schedule.id,
+                        {"reason": reason},
+                    )
+
+            for schedule in rows:
+                previous_due = schedule.next_due
+                active = session.get(
+                    Resource, (schedule.workspace, "active_recipe", schedule.source_id)
+                )
+                if active is None or active.data.get("recipe_id") != schedule.recipe_id:
+                    pause_schedule(schedule, previous_due, "RECIPE_NOT_ACTIVE")
                     continue
-                session.add(
-                    Resource(
-                        workspace=schedule.workspace,
-                        kind="run",
-                        id=run_id,
-                        data={
-                            "source_id": schedule.source_id,
-                            "recipe_id": schedule.recipe_id,
-                            "snapshot_hash": None,
-                            "state": "queued",
-                            "classification": "NOT_CONFIGURED",
-                            "schedule_id": schedule.id,
-                        },
-                    )
-                )
-                job_id = uid()
-                session.add(
-                    Job(
-                        id=job_id,
-                        workspace=schedule.workspace,
-                        kind="run",
-                        payload={"run_id": run_id},
-                        available=current,
-                        created=current,
-                    )
-                )
-                audit(
-                    session,
-                    schedule.workspace,
-                    "scheduler",
-                    "schedule.dispatched",
-                    schedule.id,
-                    {"run_id": run_id, "operation_id": job_id},
-                )
+                run_id = uid()
+                try:
+                    with session.begin_nested():
+                        updated_id = session.scalar(
+                            update(Schedule)
+                            .where(
+                                Schedule.id == schedule.id,
+                                Schedule.state == "active",
+                                Schedule.next_due == previous_due,
+                            )
+                            .values(
+                                next_due=current + timedelta(seconds=schedule.interval_seconds),
+                                last_run_id=run_id,
+                                version=Schedule.version + 1,
+                            )
+                            .returning(Schedule.id)
+                        )
+                        if updated_id is None:
+                            continue
+                        # Claim admission must happen BEFORE inserting run/job
+                        # rows, not after unbounded schedules fill the queue.
+                        flags = (admission(session, schedule) or {}) if admission else {}
+                        session.add(
+                            Resource(
+                                workspace=schedule.workspace,
+                                kind="run",
+                                id=run_id,
+                                data={
+                                    "source_id": schedule.source_id,
+                                    "recipe_id": schedule.recipe_id,
+                                    "snapshot_hash": None,
+                                    "state": "queued",
+                                    "classification": "NOT_CONFIGURED",
+                                    "schedule_id": schedule.id,
+                                },
+                            )
+                        )
+                        job_id = uid()
+                        session.add(
+                            Job(
+                                id=job_id,
+                                workspace=schedule.workspace,
+                                kind="run",
+                                payload={**flags, "run_id": run_id},
+                                available=current,
+                                created=current,
+                            )
+                        )
+                        audit(
+                            session,
+                            schedule.workspace,
+                            "scheduler",
+                            "schedule.dispatched",
+                            schedule.id,
+                            {"run_id": run_id, "operation_id": job_id},
+                        )
+                except PipelineError as exc:
+                    if exc.code not in {"QUOTA_EXCEEDED", "SOURCE_DENIED", "LIMIT_REACHED"}:
+                        raise
+                    # All admission writes have rolled back. Persist one pause
+                    # outside that savepoint; inactive schedules are not retried
+                    # on every tick. Explicit API resume preserves ETag fencing.
+                    pause_schedule(schedule, previous_due, exc.code)
+                    continue
                 dispatched += 1
         return dispatched
 

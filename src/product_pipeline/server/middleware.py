@@ -1,5 +1,7 @@
 """Bound request bodies before parsing; no token or payload logging."""
 
+from urllib.parse import urlsplit
+
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
@@ -7,8 +9,27 @@ from product_pipeline.errors import PipelineError
 
 
 class BoundaryMiddleware:
-    def __init__(self, app: ASGIApp, artifact_limit: int):
+    def __init__(
+        self,
+        app: ASGIApp,
+        artifact_limit: int,
+        auth_url: str | None = None,
+        connect_origins: tuple[str, ...] = (),
+        public_beta: bool = False,
+    ):
         self.app, self.artifact_limit = app, artifact_limit
+        self.public_beta = public_beta
+        candidates = list(connect_origins) + ([auth_url] if auth_url else [])
+        self.connect = ["'self'"]
+        for value in candidates:
+            parsed = urlsplit(value)
+            if (
+                parsed.scheme == "https"
+                and parsed.hostname
+                and not parsed.username
+                and not parsed.password
+            ):
+                self.connect.append(f"https://{parsed.netloc}")
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send):
         if scope["type"] != "http":
@@ -25,7 +46,10 @@ class BoundaryMiddleware:
                         (b"referrer-policy", b"no-referrer"),
                         (
                             b"content-security-policy",
-                            b"default-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+                            (
+                                "default-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; connect-src "
+                                + " ".join(self.connect)
+                            ).encode("ascii"),
                         ),
                     ]
                 )
@@ -38,7 +62,10 @@ class BoundaryMiddleware:
             await send(message)
 
         if scope["method"] in {"POST", "PUT", "PATCH"}:
-            limit = self.artifact_limit if scope["path"] == "/v1/artifacts" else 1_000_000
+            is_artifact = scope["path"] == "/v1/artifacts"
+            limit = self.artifact_limit if is_artifact else 1_000_000
+            if self.public_beta:
+                limit = min(limit, 1_000_000 if is_artifact else 100_000)
             body = bytearray()
             while True:
                 message = await receive()
@@ -57,6 +84,11 @@ class BoundaryMiddleware:
                     return
                 if not message.get("more_body", False):
                     break
+            if self.public_beta:
+                # Conservative allowance for metadata, idempotency copies and audit/outbox.
+                scope["pipeline.metadata_reservation"] = 8192 + (
+                    0 if is_artifact else 4 * len(body)
+                )
             delivered = False
 
             async def bounded_receive():

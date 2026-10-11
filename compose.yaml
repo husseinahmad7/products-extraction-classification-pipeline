@@ -42,7 +42,7 @@ services:
       retries: 3
   worker:
     build: .
-    command: [worker]
+    command: [worker, --forever]
     environment: *pipeline-env
     depends_on:
       migrate: {condition: service_completed_successfully}

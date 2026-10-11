@@ -16,6 +16,8 @@ __pycache__/
 *.db-shm
 *.db-wal
 .env
+.env.*
+!.env.example
 /dashboard/node_modules/
 /dashboard/dist/
 /dashboard/test-results/
